@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Beginner" />
+
+    <TextView
+        android:id="@+id/tvDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="21dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="2dp"
+        android:fontFamily="sans-serif"
+        android:textColor="#7A7A7A"
+        android:textSize="13.3sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+        tools:text="Combine 4 Tiles at one Time" />
+
+    <ImageView
+        android:id="@+id/ivShadow"
+        android:layout_width="108dp"
+        android:layout_height="70dp"
+        android:cropToPadding="false"
+        android:padding="15dp"
+        android:src="@drawable/bg_solid_rect"
+        android:tint="#b0b0b0"
+        android:tintMode="src_in"
+        app:layout_constraintBottom_toBottomOf="@+id/lyMoney"
+        app:layout_constraintEnd_toEndOf="@+id/lyMoney"
+        app:layout_constraintStart_toStartOf="@+id/lyMoney"
+        app:layout_constraintTop_toTopOf="@+id/lyMoney"
+        app:layout_constraintVertical_bias="0.47" />
+
+    <FrameLayout
+        android:id="@+id/lyMoney"
+        android:layout_width="78dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="24dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <View
+            android:visibility="invisible"
+            android:background="@drawable/bg_border_rect_disabled"
+            android:id="@+id/vBgDisabled"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:layout_width="78dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvMoney"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="3dp"
+                android:fontFamily="sans-serif-medium"
+                android:includeFontPadding="false"
+                android:textColor="@color/snow"
+                android:textSize="17sp"
+                tools:text="30" />
+
+            <ImageView
+                android:id="@+id/ivCoin"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_coins"
+                android:tint="@color/snow"
+                app:layout_constraintBottom_toBottomOf="@+id/tvAchievements"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvAchievements" />
+
+            <ImageView
+                android:id="@+id/ivLocked"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_lock_outline"
+                android:tint="@color/snow"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/tvAchievements"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvAchievements" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</android.support.constraint.ConstraintLayout>

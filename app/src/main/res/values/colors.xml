@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="snow">#ffffff</color>
+    <color name="black">#000000</color>
+
+    <color name="dividerColor">#d8d8d8</color>
+
+    <color name="homeIconTint">#41000000</color>
+
+    <color name="game_divider_color">#28000000</color>
+    <color name="game_border_color">#28000000</color>
+
+</resources>

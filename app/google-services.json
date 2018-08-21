@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "602961554548",
+    "firebase_url": "https://the-clean-one.firebaseio.com",
+    "project_id": "the-clean-one",
+    "storage_bucket": "the-clean-one.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:602961554548:android:88b05ca132dba031",
+        "android_client_info": {
+          "package_name": "com.titaniel.twothousandeightyfour"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "602961554548-8e2d65l7omcivs9khm6u0ajrfaergef3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGC0FDY1qSoDRIfnrSB4h_ApEwD-zGaX4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

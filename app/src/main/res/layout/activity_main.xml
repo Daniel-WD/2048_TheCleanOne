@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/snow"
+    tools:context=".MainActivity">
+
+    <fragment
+        tools:visibility="invisible"
+        android:id="@+id/fragmentHome"
+        tools:layout="@layout/fragment_home"
+        android:name="com.titaniel.twothousandeightyfour.fragments.Home"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <fragment
+        tools:visibility="invisible"
+        android:id="@+id/fragmentAchievements"
+        tools:layout="@layout/fragment_achievements"
+        android:name="com.titaniel.twothousandeightyfour.fragments.achievements.Achievements"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <fragment
+        tools:visibility="invisible"
+        android:id="@+id/fragmentGame"
+        tools:layout="@layout/fragment_game"
+        android:name="com.titaniel.twothousandeightyfour.fragments.game.Game"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <fragment
+        tools:visibility="invisible"
+        android:id="@+id/fragmentDialog"
+        tools:layout="@layout/fragment_dialog"
+        android:name="com.titaniel.twothousandeightyfour.fragments.Dialog"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+</FrameLayout>

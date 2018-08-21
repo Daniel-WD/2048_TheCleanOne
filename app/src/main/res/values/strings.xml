@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">2048 - The Clean One</string>
+
+    <string name="temp_best">Record: %1$d</string>
+
+    <string name="achievements">Achievements</string>
+
+    <!-- Instructions -->
+    <string name="instr_delete">Tap to delete a Number</string>
+
+    <string name="instr_exchange">Tap two Numbers to swap</string>
+
+    <string name="instr_double">Tap the Number to double</string>
+
+    <!-- Achievements -->
+    <string name="beginner">Beginner</string>
+    <string name="beginner_desc">Combine 4 Tiles at one Time</string>
+
+    <string name="master">Master</string>
+    <string name="master_desc">Get the 2048 Tile</string>
+
+    <string name="hero">Hero</string>
+    <string name="hero_desc">Get the 1024 Tile</string>
+
+    <string name="champion">Champion</string>
+    <string name="champion_desc">Get the 512 Tile</string>
+
+    <string name="combiner">Combiner</string>
+    <string name="combiner_desc">Combine 2 and 4 Tiles at ones</string>
+
+    <string name="smart">Smart</string>
+    <string name="smart_desc">Be smart ;)</string>
+
+
+    <string name="score">SCORE</string>
+
+    <string name="back">Back</string>
+    <string name="restart">Restart</string>
+    <string name="home">Home</string>
+    <string name="resume">Resume</string>
+
+    <string name="lost">You Lost!</string>
+    <string name="won">You Won!</string>
+
+</resources>
