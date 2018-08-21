@@ -71,13 +71,15 @@ public class Database {
     public static Achievement[] achievements;
 
     public static final Mode[] modes = {
+            new Mode("3x3", 3, -1),
             new Mode("4x4", 4, 0),
             new Mode("5x5", 5, 1),
             new Mode("6x6", 6, 2),
             new Mode("7x7", 7, 3),
-            new Mode("8x8", 8, 4)
+            new Mode("8x8", 8, 4),
+            new Mode("9x9", 9, 5)
     };
-    public static Mode currentMode = modes[0];
+    public static Mode currentMode = modes[1];
 
     private static SharedPreferences sPrefs;
 
