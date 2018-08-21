@@ -68,10 +68,7 @@ public class Game extends AnimatedFragment {
         //init
         mRoot = getView();
         mBtnPause = mRoot.findViewById(R.id.ivPause);
-        mTvScore = mRoot.findViewById(R.id.tvScore);
         mTvPoints = mRoot.findViewById(R.id.tvPoints);
-        mLyPoints = mRoot.findViewById(R.id.lyPoints);
-        mTvInstruction = mRoot.findViewById(R.id.tvInstruction);
         gameField = mRoot.findViewById(R.id.gameField);
         mTouchArea = mRoot.findViewById(R.id.touchArea);
         mVDivOne = mRoot.findViewById(R.id.vDivOne);
