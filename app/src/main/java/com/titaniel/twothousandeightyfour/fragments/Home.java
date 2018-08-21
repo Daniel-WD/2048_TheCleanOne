@@ -89,6 +89,7 @@ public class Home extends AnimatedFragment {
 
         //rate
         mBtnRate.setOnClickListener(v -> {
+            if(mBlocking) return;
             Uri uri = Uri.parse("market://details?id=" + getContext().getPackageName());
             Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
             goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
@@ -104,12 +105,14 @@ public class Home extends AnimatedFragment {
 
         //resume
         mBtnResume.setOnClickListener(v -> {
+            if(mBlocking) return;
             mActivity.game.loadGame = true;
             mActivity.showGame(0, this);
         });
 
         //play
         mBtnPlay.setOnClickListener(v -> {
+            if(mBlocking) return;
             mActivity.game.loadGame = false;
             mActivity.showGame(0, this);
         });
@@ -235,6 +238,8 @@ public class Home extends AnimatedFragment {
 
     @Override
     protected void animateShow(long delay) {
+
+        block(1600);
 
         setMode(Database.currentMode);
 //        checkPeriph();
@@ -440,7 +445,7 @@ public class Home extends AnimatedFragment {
         delay += 100;
 
         //ly buttons
-        long duration = 300;
+        long duration = 250;
         TimeInterpolator interpolator = new AccelerateDecelerateInterpolator();
 
         float newScale = (float) mRoot.getHeight()/(float) mLyButtons.getHeight();
@@ -453,13 +458,13 @@ public class Home extends AnimatedFragment {
         AnimUtils.animateTranslationY(mLyButtons, interpolator, translY, duration, delay);
         AnimUtils.animateTranslationY(mIvBtnsShadow, interpolator, translY, duration, delay);
 
-        AnimUtils.animateAlpha(mIvBtnsShadow, interpolator, 0, duration, delay);
+        //AnimUtils.animateAlpha(mIvBtnsShadow, interpolator, 0, duration, delay);
 
         delay += 400;
 
         handler.postDelayed(() -> mRoot.setVisibility(View.INVISIBLE), delay);
 
-        return 400;
+        return 350;
     }
 
 }

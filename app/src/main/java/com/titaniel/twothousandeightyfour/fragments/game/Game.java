@@ -204,7 +204,7 @@ public class Game extends AnimatedFragment {
         delay += 200;
 
         //point dividers
-        long scaleDuration = 350;
+        long scaleDuration = 300;
 
         mVDivOne.setAlpha(0f);
         mVDivOne.setScaleX(0.1f);
@@ -216,7 +216,7 @@ public class Game extends AnimatedFragment {
         AnimUtils.animateAlpha(mVDivTwo, new DecelerateInterpolator(2), 1, scaleDuration, delay);
         AnimUtils.animateScaleX(mVDivTwo, new DecelerateInterpolator(2), 1, scaleDuration, delay);
 
-        delay += 250;
+        delay += 150;
 
         //gamefield
         gameField.setVisibility(View.INVISIBLE);
@@ -226,7 +226,7 @@ public class Game extends AnimatedFragment {
             gameField.animateIn();
         }, delay);
 
-        delay += 750;
+        delay += 650;
 
 //        gameField.setTranslationY(50);
 //        AnimUtils.animateAlpha(gameField, new DecelerateInterpolator(), 1, moveDuration, delay);
