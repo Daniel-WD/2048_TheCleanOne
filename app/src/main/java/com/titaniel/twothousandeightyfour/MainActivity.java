@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         //mIvBackground = findViewById(R.id.ivBackground);
 
         mHandler.postDelayed(() -> showHome(0, null), 800);
+//        mHandler.postDelayed(() -> showDialog(0, Dialog.MODE_LOST_VIDEO), 800);
     }
 
     public void animateBgScale(float scale, long delay, long duration) {
@@ -112,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
         if(state == STATE_FM_GAME) {
             Database.currentMode.saved = game.gameField.getSaveImage();
-            Database.currentMode.savedPoints = game.points;
         }
 
         Database.save();

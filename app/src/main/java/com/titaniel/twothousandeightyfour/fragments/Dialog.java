@@ -23,9 +23,11 @@ import jp.wasabeef.blurry.Blurry;
 
 public class Dialog extends AnimatedFragment {
 
-    public static final int MODE_LOST = 0;
+    public static final int MODE_LOST_NO_INTERNET = 0;
     public static final int MODE_WON = 1;
     public static final int MODE_PAUSE = 2;
+    public static final int MODE_LOST_BACKABLE = 3;
+    public static final int MODE_LOST_VIDEO = 4;
 
     private int mMode = 0;
 
@@ -33,14 +35,25 @@ public class Dialog extends AnimatedFragment {
     private ImageView mIvBgShadow;
 
     private FrameLayout mLyContainer;
-    private ConstraintLayout mLyWon, mLyLost, mLyPause;
+    private ConstraintLayout mLyWon, mLyLostNoInternet, mLyPause, mLyLostBackable, mLyLostVideo;
 
+    //won
     private TextView mTvWon;
     private Button mBtnWonHome, mBtnWonRestart, mBtnWonResume;
 
-    private TextView mTvLost;
-    private Button mBtnLostHome, mBtnLostRestart;
+    //lost no internet
+    private TextView mTvLostNoInternet;
+    private Button mBtnLostHomeNoInternet, mBtnLostRestartNoInternet;
 
+    //lost backable
+    private TextView mTvLostBackable;
+    private Button mBtnLostHomeBackable, mBtnLostUndoBackable, mBtnLostRestartBackable;
+
+    //lost video
+    private TextView mTvLostVideo;
+    private Button mBtnLostHomeVideo, mBtnLostNewBacksVideo, mBtnLostRestartVideo;
+
+    //pause
     private Button mBtnPauseHome, mBtnPauseRestart, mBtnPauseBack;
 
 
@@ -66,21 +79,140 @@ public class Dialog extends AnimatedFragment {
         mRoot = getView();
         mIvBgShadow = mRoot.findViewById(R.id.ivBgShadow);
         mLyWon = mRoot.findViewById(R.id.lyWon);
-        mLyLost = mRoot.findViewById(R.id.lyLost);
+        mLyLostNoInternet = mRoot.findViewById(R.id.lyLost);
         mLyPause = mRoot.findViewById(R.id.lyPause);
         mTvWon = mRoot.findViewById(R.id.tvWon);
-        mTvLost = mRoot.findViewById(R.id.tvLost);
+        mTvLostNoInternet = mRoot.findViewById(R.id.tvLostNoInternet);
         mBtnWonHome = mRoot.findViewById(R.id.btnWonHome);
-        mBtnLostHome = mRoot.findViewById(R.id.btnLostHome);
+        mBtnLostHomeNoInternet = mRoot.findViewById(R.id.btnLostHomeNoInternet);
         mBtnWonRestart = mRoot.findViewById(R.id.btnWonRestart);
-        mBtnLostRestart = mRoot.findViewById(R.id.btnLostRestart);
+        mBtnLostRestartNoInternet = mRoot.findViewById(R.id.btnLostRestartNoInternet);
         mBtnWonResume = mRoot.findViewById(R.id.btnWonResume);
         mLyContainer = mRoot.findViewById(R.id.lyContainer);
         mBtnPauseBack = mRoot.findViewById(R.id.btnPauseBack);
         mBtnPauseHome = mRoot.findViewById(R.id.btnPauseHome);
         mBtnPauseRestart = mRoot.findViewById(R.id.btnPauseRestart);
+        mBtnLostHomeBackable = mRoot.findViewById(R.id.btnLostHomeBackable);
+        mBtnLostRestartBackable = mRoot.findViewById(R.id.btnLostRestartBackable);
+        mBtnLostUndoBackable = mRoot.findViewById(R.id.btnLostUndoBackable);
+        mLyLostBackable = mRoot.findViewById(R.id.lyLostBackable);
+        mLyLostVideo = mRoot.findViewById(R.id.lyLostVideo);
+        mBtnLostHomeVideo = mRoot.findViewById(R.id.btnLostHomeVideo);
+        mBtnLostNewBacksVideo = mRoot.findViewById(R.id.btnLostNewBacksVideo);
+        mBtnLostRestartVideo = mRoot.findViewById(R.id.btnLostRestartVideo);
+        mTvLostVideo = mRoot.findViewById(R.id.tvLostVideo);
 
-        //make bg shadow
+
+        // ---------- WON ---------------------
+
+        //home
+        mBtnWonHome.setOnClickListener(v -> {
+            mActivity.hideDialog(0);
+            mActivity.showHome(0, mActivity.game);
+        });
+
+        //restart
+        mBtnWonRestart.setOnClickListener(v -> {
+            mActivity.game.restart();
+            mActivity.hideDialog(0);
+        });
+
+        //resume
+        mBtnWonResume.setOnClickListener(v -> {
+            mActivity.hideDialog(0);
+            mActivity.game.enableAll();
+        });
+
+
+        // ---------- LOST NO INTERNET ---------------------
+
+        //home
+        mBtnLostHomeNoInternet.setOnClickListener(v -> {
+            Database.currentMode.saved = null;
+            mActivity.hideDialog(0);
+            mActivity.showHome(0, mActivity.game);
+        });
+
+        //restart
+        mBtnLostRestartNoInternet.setOnClickListener(v -> {
+            Database.currentMode.saved = null;
+            mActivity.game.restart();
+            mActivity.hideDialog(0);
+        });
+
+        // ---------- LOST BACKABLE ---------------------
+
+        //undo
+        mBtnLostUndoBackable.setOnClickListener(v -> {
+            mBtnPauseBack.callOnClick();
+
+            handler.postDelayed(() -> {
+                mActivity.game.gameField.performBack();
+            }, 600);
+        });
+
+        //home
+        mBtnLostHomeBackable.setOnClickListener(v -> {
+            mBtnLostHomeNoInternet.callOnClick();
+        });
+
+        //restart
+        mBtnLostRestartBackable.setOnClickListener(v -> {
+            mBtnLostRestartNoInternet.callOnClick();
+        });
+
+
+        // ---------- LOST VIDEO ---------------------
+
+        //new backs
+        mBtnLostNewBacksVideo.setOnClickListener(v -> {
+
+            // TODO: 23.08.2018 VIDEO
+
+            Database.currentMode.backs += 4;
+
+            mBtnLostUndoBackable.callOnClick();
+
+        });
+
+        //home
+        mBtnLostHomeVideo.setOnClickListener(v -> {
+            mBtnLostHomeNoInternet.callOnClick();
+        });
+
+        //restart
+        mBtnLostRestartVideo.setOnClickListener(v -> {
+            mBtnLostRestartNoInternet.callOnClick();
+        });
+
+
+        // ---------- PAUSE ---------------------
+
+        //home
+        mBtnPauseHome.setOnClickListener(v -> {
+            Database.currentMode.saved = mActivity.game.gameField.getSaveImage();
+            mActivity.hideDialog(0);
+            mActivity.showHome(0, mActivity.game);
+        });
+
+        //restart
+        mBtnPauseRestart.setOnClickListener(v -> {
+            mActivity.game.restart();
+            mActivity.hideDialog(0);
+        });
+
+        //back
+        mBtnPauseBack.setOnClickListener(v -> {
+            mActivity.hideDialog(0);
+
+            handler.postDelayed(() -> {
+                mActivity.game.enableAll();
+            }, 350);
+        });
+
+    }
+
+    private void makeShadow() {
         mIvBgShadow.setScaleX(1);
         mIvBgShadow.setScaleY(1);
         mIvBgShadow.setImageResource(R.drawable.bg_solid_rect);
@@ -90,96 +222,58 @@ public class Dialog extends AnimatedFragment {
                     .sampling(5)
                     .capture(mIvBgShadow)
                     .into(mIvBgShadow);
-            if(mMode == MODE_WON) {
-                mIvBgShadow.setTranslationY(0.01f);
+            if(mMode == MODE_WON || mMode == MODE_LOST_BACKABLE || mMode == MODE_LOST_VIDEO) {
+                mIvBgShadow.setTranslationY(mIvBgShadow.getTranslationY() + 0.01f);
                 mIvBgShadow.setScaleX(2f);
                 mIvBgShadow.setScaleY(1.36f);
             } else {
-                mIvBgShadow.setTranslationY(0.01f);
+                mIvBgShadow.setTranslationY(mIvBgShadow.getTranslationY() + 0.01f);
                 mIvBgShadow.setScaleX(2f);
                 mIvBgShadow.setScaleY(1.5f);
             }
         });
-
-        // ---------- WON ---------------------
-
-        //won home
-        mBtnWonHome.setOnClickListener(v -> {
-            mActivity.hideDialog(0);
-            mActivity.showHome(0, mActivity.game);
-        });
-
-        //won restart
-        mBtnWonRestart.setOnClickListener(v -> {
-            mActivity.game.restart();
-            mActivity.hideDialog(0);
-        });
-
-        //won resume
-        mBtnWonResume.setOnClickListener(v -> {
-            mActivity.hideDialog(0);
-            mActivity.game.enableAll();
-        });
-
-        // ---------- LOST ---------------------
-
-        //lost home
-        mBtnLostHome.setOnClickListener(v -> {
-            Database.currentMode.saved = null;
-            mActivity.hideDialog(0);
-            mActivity.showHome(0, mActivity.game);
-        });
-
-        //lost restart
-        mBtnLostRestart.setOnClickListener(v -> {
-            Database.currentMode.saved = null;
-            mActivity.game.restart();
-            mActivity.hideDialog(0);
-        });
-
-        // ---------- PAUSE ---------------------
-
-        //pause home
-        mBtnPauseHome.setOnClickListener(v -> {
-            Database.currentMode.saved = mActivity.game.gameField.getSaveImage();
-            Database.currentMode.savedPoints = mActivity.game.points;
-            mActivity.hideDialog(0);
-            mActivity.showHome(0, mActivity.game);
-        });
-
-        //pause restart
-        mBtnPauseRestart.setOnClickListener(v -> {
-            mActivity.game.restart();
-            mActivity.hideDialog(0);
-        });
-
-        //pause back
-        mBtnPauseBack.setOnClickListener(v -> {
-            mActivity.hideDialog(0);
-            mActivity.game.enableAll();
-        });
-
     }
 
     public void setMode(int mode) {
         mMode = mode;
         switch(mode) {
-            case MODE_LOST:
-                mLyLost.setVisibility(View.VISIBLE);
+            case MODE_LOST_NO_INTERNET:
+                mLyLostNoInternet.setVisibility(View.VISIBLE);
+                mLyLostVideo.setVisibility(View.GONE);
                 mLyWon.setVisibility(View.GONE);
                 mLyPause.setVisibility(View.GONE);
+                mLyLostBackable.setVisibility(View.GONE);
                 break;
             case MODE_WON:
                 mLyWon.setVisibility(View.VISIBLE);
-                mLyLost.setVisibility(View.GONE);
+                mLyLostVideo.setVisibility(View.GONE);
+                mLyLostNoInternet.setVisibility(View.GONE);
                 mLyPause.setVisibility(View.GONE);
+                mLyLostBackable.setVisibility(View.GONE);
                 break;
             case MODE_PAUSE:
                 mLyPause.setVisibility(View.VISIBLE);
-                mLyLost.setVisibility(View.GONE);
+                mLyLostVideo.setVisibility(View.GONE);
+                mLyLostNoInternet.setVisibility(View.GONE);
+                mLyWon.setVisibility(View.GONE);
+                mLyLostBackable.setVisibility(View.GONE);
+                break;
+            case MODE_LOST_BACKABLE:
+                mLyLostBackable.setVisibility(View.VISIBLE);
+                mLyLostVideo.setVisibility(View.GONE);
+                mLyPause.setVisibility(View.GONE);
+                mLyLostNoInternet.setVisibility(View.GONE);
+                mLyWon.setVisibility(View.GONE);
+                break;
+            case MODE_LOST_VIDEO:
+                mLyLostVideo.setVisibility(View.VISIBLE);
+                mLyLostBackable.setVisibility(View.GONE);
+                mLyPause.setVisibility(View.GONE);
+                mLyLostNoInternet.setVisibility(View.GONE);
                 mLyWon.setVisibility(View.GONE);
                 break;
         }
+        makeShadow();
     }
 
     @Override
@@ -188,7 +282,7 @@ public class Dialog extends AnimatedFragment {
         mRoot.setVisibility(View.VISIBLE);
 
         float diff = -mRoot.getHeight();
-        long duration = 500;
+        long duration = 450;
 
         mLyContainer.setTranslationY(diff);
         mIvBgShadow.setTranslationY(diff);
@@ -201,13 +295,13 @@ public class Dialog extends AnimatedFragment {
     protected long animateHide(long delay) {
 
         float diff = mRoot.getHeight();
-        long duration = 500;
+        long duration = 450;
 
         AnimUtils.animateTranslationY(mLyContainer, new AccelerateInterpolator(2), diff, duration, delay);
         AnimUtils.animateTranslationY(mIvBgShadow, new AccelerateInterpolator(2), diff, duration, delay);
 
         handler.postDelayed(() -> mRoot.setVisibility(View.INVISIBLE), 500);
 
-        return 500;
+        return 450;
     }
 }

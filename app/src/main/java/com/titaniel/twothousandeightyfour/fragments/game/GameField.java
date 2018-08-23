@@ -45,6 +45,8 @@ public class GameField extends View {
         void onJoin(int newNumber);
 
         void onMoveCompleted();
+
+        void onBackCompleted();
     }
 
     private MoveListener mMoveListener = null;
@@ -146,7 +148,7 @@ public class GameField extends View {
             anim.setInterpolator(new FastOutSlowInInterpolator());
             anim.start();
 
-            ValueAnimator rotationAnim = ValueAnimator.ofFloat(-40, 0);
+            ValueAnimator rotationAnim = ValueAnimator.ofFloat(mRandom.nextInt(80)-40, 0);
             rotationAnim.addUpdateListener(valueAnimator -> {
                 borderRotation = (float) valueAnimator.getAnimatedValue();
                 invalidate();
@@ -546,7 +548,15 @@ public class GameField extends View {
             mImages.remove(mImages.size() - 1);
         }, REMOVE_DURATION);
 
+        postDelayed(() -> {
+            if(mMoveListener != null) mMoveListener.onBackCompleted();
+        }, REMOVE_DURATION*2);
+
         return true;
+    }
+
+    public boolean canPerformBack() {
+        return mImages.size() != 0;
     }
 
     public void deleteTile(Tile tile) {
@@ -601,7 +611,7 @@ public class GameField extends View {
         return save;
     }
 
-    public void setSaveImage(ArrayList<FieldImage> images) {
+    public void setSaveImageAndAnimate(ArrayList<FieldImage> images) {
         if(images == null) return;
         canMove = false;
         int[][] last = images.get(images.size() - 1).image;
@@ -610,12 +620,12 @@ public class GameField extends View {
                 if(last[i][j] == 0) continue;
                 Tile newTile = new Tile(i, j, last[i][j]);
                 mTiles.add(newTile);
-                newTile.animateRegeneration(mRandom.nextInt(400));
+                newTile.animateRegeneration(mRandom.nextInt(300));
             }
         }
         if(images.size() > 0) images.remove(images.size() - 1);
         mImages = images;
-        postDelayed(() -> canMove = true, 400);
+        postDelayed(() -> canMove = true, 300);
     }
 
 
@@ -858,6 +868,7 @@ public class GameField extends View {
 
     public void clear() {
         mTiles.clear();
+        mImages.clear();
         invalidate();
     }
 

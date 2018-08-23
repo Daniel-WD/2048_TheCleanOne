@@ -7,12 +7,12 @@
     android:viewportHeight="24">
     <group android:name="wrapper">
         <clip-path
-            android:name="clip_minus"
+            android:name="clip_video_1"
             android:pathData="M 0 0 L 24 0 L 24 24 L 0 24 Z"/>
         <group android:name="group">
             <path
                 android:name="path"
-                android:pathData="M 24 11.2 L 24 12.827 L 0 12.827 L 0 11.2 Z"
+                android:pathData="M 23.01 20.328 L 2.981 20.328 L 2.981 19.338 L 23.01 19.338 L 23.01 3.75 L 23.999 3.75 L 23.999 20.328 Z M -0.001 20.328 L -0.001 3.75 L 21.018 3.75 L 21.018 4.74 L 0.989 4.74 L 0.989 20.328 Z M 10.131 8.891 L 14.586 11.971 L 10.131 15.05 Z"
                 android:fillColor="#000"
                 android:strokeWidth="1"/>
         </group>

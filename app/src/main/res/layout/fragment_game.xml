@@ -10,7 +10,7 @@
     <com.titaniel.twothousandeightyfour.fragments.game.TouchArea
         android:id="@+id/touchArea"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="492dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,8 +46,8 @@
         android:layout_marginTop="8dp"
         android:fontFamily="sans-serif-light"
         android:includeFontPadding="false"
-        android:textColor="@color/black"
         android:letterSpacing="0.00"
+        android:textColor="@color/black"
         android:textSize="31sp"
         app:layout_constraintBottom_toTopOf="@+id/gameField"
         app:layout_constraintEnd_toEndOf="parent"
@@ -80,5 +80,45 @@
         android:src="@drawable/ic_pause"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/lyBack"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_round_rect_outline"
+        app:layout_constraintBottom_toBottomOf="@+id/vDivTwo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/vDivOne">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/ic_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.46"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.48" />
+
+        <TextView
+            android:id="@+id/tvBackCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:text="3"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.85" />
+
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

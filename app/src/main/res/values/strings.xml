@@ -38,6 +38,8 @@
     <string name="restart">Restart</string>
     <string name="home">Home</string>
     <string name="resume">Resume</string>
+    <string name="undo">Undo</string>
+    <string name="get_backs">Get 3 Backs</string>
 
     <string name="lost">You Lost!</string>
     <string name="won">You Won!</string>

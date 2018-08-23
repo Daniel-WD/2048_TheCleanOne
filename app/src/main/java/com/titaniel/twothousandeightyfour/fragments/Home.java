@@ -113,6 +113,8 @@ public class Home extends AnimatedFragment {
         //play
         mBtnPlay.setOnClickListener(v -> {
             if(mBlocking) return;
+            Database.currentMode.points = 0;
+            Database.currentMode.backs = Database.START_BACK_VALUE;
             mActivity.game.loadGame = false;
             mActivity.showGame(0, this);
         });
@@ -239,7 +241,7 @@ public class Home extends AnimatedFragment {
     @Override
     protected void animateShow(long delay) {
 
-        block(1600);
+        block(1400);
 
         setMode(Database.currentMode);
 //        checkPeriph();
@@ -301,9 +303,7 @@ public class Home extends AnimatedFragment {
         mIvBtnsShadow.setAlpha(0f);
         AnimUtils.animateAlpha(mIvBtnsShadow, new DecelerateInterpolator(2), 1, dur, delay);
 
-
-
-        delay += 450;
+        delay += 250;
 
         //buttons
         long buttonDuration = 800;
@@ -329,7 +329,7 @@ public class Home extends AnimatedFragment {
 //        AnimUtils.animateTranslationY(mBtnRate, new DecelerateInterpolator(), 0, buttonDuration, delay);
 
 
-        delay += 350;
+        delay += 300;
 
         mVDivOne.setScaleX(0.1f);
         mVDivOne.setAlpha(0);
@@ -445,7 +445,7 @@ public class Home extends AnimatedFragment {
         delay += 100;
 
         //ly buttons
-        long duration = 250;
+        long duration = 200;
         TimeInterpolator interpolator = new AccelerateDecelerateInterpolator();
 
         float newScale = (float) mRoot.getHeight()/(float) mLyButtons.getHeight();
@@ -464,7 +464,7 @@ public class Home extends AnimatedFragment {
 
         handler.postDelayed(() -> mRoot.setVisibility(View.INVISIBLE), delay);
 
-        return 350;
+        return 300;
     }
 
 }
