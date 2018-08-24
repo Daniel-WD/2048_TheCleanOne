@@ -14,7 +14,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvPoints" />
+        app:layout_constraintTop_toBottomOf="@+id/lyPoints" />
 
     <View
         android:id="@+id/vDivOne"
@@ -22,7 +22,7 @@
         android:layout_height="0.5dp"
         android:layout_marginBottom="9dp"
         android:background="#28000000"
-        app:layout_constraintBottom_toTopOf="@+id/tvPoints"
+        app:layout_constraintBottom_toTopOf="@+id/lyPoints"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -30,31 +30,46 @@
         android:id="@+id/vDivTwo"
         android:layout_width="180dp"
         android:layout_height="0.5dp"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="7dp"
         android:background="#28000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvPoints" />
+        app:layout_constraintTop_toBottomOf="@+id/lyPoints" />
 
-    <TextView
-        android:id="@+id/tvPoints"
+    <LinearLayout
+        android:id="@+id/lyPoints"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:fontFamily="sans-serif-light"
-        android:includeFontPadding="false"
-        android:letterSpacing="0.00"
-        android:textColor="@color/black"
-        android:textSize="31sp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/gameField"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.55"
-        tools:text="29387" />
+        app:layout_constraintVertical_bias="0.55">
+
+        <TextView
+            android:id="@+id/tvPoints"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:includeFontPadding="false"
+            android:textColor="@color/black"
+            android:textSize="31sp"
+            tools:text="29387" />
+
+        <TextView
+            android:id="@+id/tvRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:fontFamily="sans-serif-light"
+            android:includeFontPadding="false"
+            android:text="Record: 256"
+            android:textColor="@color/black"
+            android:textSize="13sp" />
+
+    </LinearLayout>
 
     <com.titaniel.twothousandeightyfour.fragments.game.GameField
         android:id="@+id/gameField"

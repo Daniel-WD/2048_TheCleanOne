@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -176,7 +175,7 @@ public class Home extends AnimatedFragment {
     private void setMode(Database.Mode mode) {
         if(mode == null) return;
         mTvMode.setText(mode.representative);
-        mTvModeBest.setText(getString(R.string.temp_best, mode.best));
+        mTvModeBest.setText(getString(R.string.temp_best, mode.record));
     }
 
     private void changeMode(boolean previous) {

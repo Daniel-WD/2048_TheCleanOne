@@ -44,6 +44,7 @@ public class Game extends AnimatedFragment {
     private View mVDivOne, mVDivTwo;
     private TextView mTvBackCount;
     private ConstraintLayout mLyBack;
+    private TextView mTvRecord;
 
     public GameField gameField;
 
@@ -78,6 +79,7 @@ public class Game extends AnimatedFragment {
         mVDivTwo = mRoot.findViewById(R.id.vDivTwo);
         mTvBackCount = mRoot.findViewById(R.id.tvBackCount);
         mLyBack = mRoot.findViewById(R.id.lyBack);
+        mTvRecord = mRoot.findViewById(R.id.tvRecord);
 
         //back
         mLyBack.setOnClickListener(v -> {
@@ -137,9 +139,11 @@ public class Game extends AnimatedFragment {
                 }
 
                 // TODO: 22.08.2018 optimize --> method in mode
-                if(Database.currentMode.points > Database.currentMode.best) {
-                    Database.currentMode.best = Database.currentMode.points;
+                if(Database.currentMode.points > Database.currentMode.record) {
+                    Database.currentMode.record = Database.currentMode.points;
                 }
+
+                updateRecordText();
             }
 
             @Override
@@ -151,6 +155,7 @@ public class Game extends AnimatedFragment {
 
         //points reset
         updatePointsText();
+        updateRecordText();
 
         //hide back
         mLyBack.setVisibility(View.INVISIBLE);
@@ -208,6 +213,7 @@ public class Game extends AnimatedFragment {
 
         AnimUtils.animateAlpha(gameField, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mTvPoints, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
+        AnimUtils.animateAlpha(mTvRecord, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mVDivOne, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mVDivTwo, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
 
@@ -230,6 +236,7 @@ public class Game extends AnimatedFragment {
         AnimUtils.animateAlpha(gameField, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mBtnPause, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mTvPoints, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
+        AnimUtils.animateAlpha(mTvRecord, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mVDivOne, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mVDivTwo, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         if(mBackShown) AnimUtils.animateAlpha(mLyBack, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
@@ -254,11 +261,16 @@ public class Game extends AnimatedFragment {
     private void reset() {
         gameField.clear();
         updatePointsText();
+        updateRecordText();
         gameField.setFieldSize(Database.currentMode.fieldSize);
     }
 
     public void updatePointsText() {
         mTvPoints.setText(String.valueOf(Database.currentMode.points));
+    }
+
+    public void updateRecordText() {
+        mTvRecord.setText(getString(R.string.temp_best, Database.currentMode.record));
     }
 
     @Override
@@ -286,6 +298,18 @@ public class Game extends AnimatedFragment {
         mTvPoints.setTranslationY(30);
         AnimUtils.animateAlpha(mTvPoints, new DecelerateInterpolator(2), 1, moveDuration, delay);
         AnimUtils.animateTranslationY(mTvPoints, new DecelerateInterpolator(2), 0, moveDuration, delay);
+
+        //record
+        if(Database.currentMode.record == 0) {
+            mTvRecord.setVisibility(View.GONE);
+        } else {
+            mTvRecord.setVisibility(View.VISIBLE);
+
+            mTvRecord.setAlpha(0f);
+            mTvRecord.setTranslationY(30);
+            AnimUtils.animateAlpha(mTvRecord, new DecelerateInterpolator(2), 1, moveDuration, delay);
+            AnimUtils.animateTranslationY(mTvRecord, new DecelerateInterpolator(2), 0, moveDuration, delay);
+        }
 
         delay += 200;
 

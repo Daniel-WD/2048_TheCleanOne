@@ -34,7 +34,7 @@ public class Database {
 
         final public String representative;
         final public int fieldSize;
-        public int best = 0;
+        public int record = 0;
         final int id;
         public ArrayList<GameField.FieldImage> saved;
         public int points = 0, backs = 0;
@@ -51,7 +51,7 @@ public class Database {
             if(o == null || getClass() != o.getClass()) return false;
             Mode mode = (Mode) o;
             return fieldSize == mode.fieldSize &&
-                    best == mode.best &&
+                    record == mode.record &&
                     id == mode.id &&
                     points == mode.points &&
                     Objects.equals(representative, mode.representative) &&
@@ -61,7 +61,7 @@ public class Database {
         @Override
         public int hashCode() {
 
-            return Objects.hash(representative, fieldSize, best, id, saved, points);
+            return Objects.hash(representative, fieldSize, record, id, saved, points);
         }
     }
 
@@ -183,7 +183,7 @@ public class Database {
         long time = System.nanoTime();
 
         for(Mode mode : modes) {
-            mode.best = sPrefs.getInt("best-" + mode.id, 0);
+            mode.record = sPrefs.getInt("record-" + mode.id, 0);
             mode.points = sPrefs.getInt("points-" + mode.id, 0);
             mode.backs = sPrefs.getInt("backs-" + mode.id, 0);
 
@@ -197,7 +197,7 @@ public class Database {
         SharedPreferences.Editor editor = sPrefs.edit();
 
         for(Mode mode : modes) {
-            editor.putInt("best-" + mode.id, mode.best);
+            editor.putInt("record-" + mode.id, mode.record);
             editor.putInt("points-" + mode.id, mode.points);
             editor.putInt("backs-" + mode.id, mode.backs);
 
