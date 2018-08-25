@@ -4,10 +4,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -19,6 +21,7 @@ import com.titaniel.twothousandeightyfour.database.Database;
 import com.titaniel.twothousandeightyfour.fragments.AnimatedFragment;
 import com.titaniel.twothousandeightyfour.fragments.Dialog;
 import com.titaniel.twothousandeightyfour.utils.AnimUtils;
+import com.titaniel.twothousandeightyfour.utils.Utils;
 
 public class Game extends AnimatedFragment {
 
@@ -39,14 +42,15 @@ public class Game extends AnimatedFragment {
     private TextView mTvInstruction;
     private TouchArea mTouchArea;
     private View mVDivOne, mVDivTwo;
+    private TextView mTvBackCount;
+    private ConstraintLayout mLyBack;
+    private TextView mTvRecord;
 
     public GameField gameField;
 
     public boolean loadGame = false;
 
-    public int points = 0;
-
-    private boolean mPUShown = false;
+    private boolean mBackShown = false;
     private boolean mBlocking = false;
 
     private Runnable mDeblocker = () -> mBlocking = false;
@@ -68,14 +72,22 @@ public class Game extends AnimatedFragment {
         //init
         mRoot = getView();
         mBtnPause = mRoot.findViewById(R.id.ivPause);
-        mTvScore = mRoot.findViewById(R.id.tvScore);
         mTvPoints = mRoot.findViewById(R.id.tvPoints);
-        mLyPoints = mRoot.findViewById(R.id.lyPoints);
-        mTvInstruction = mRoot.findViewById(R.id.tvInstruction);
         gameField = mRoot.findViewById(R.id.gameField);
         mTouchArea = mRoot.findViewById(R.id.touchArea);
         mVDivOne = mRoot.findViewById(R.id.vDivOne);
         mVDivTwo = mRoot.findViewById(R.id.vDivTwo);
+        mTvBackCount = mRoot.findViewById(R.id.tvBackCount);
+        mLyBack = mRoot.findViewById(R.id.lyBack);
+        mTvRecord = mRoot.findViewById(R.id.tvRecord);
+
+        //back
+        mLyBack.setOnClickListener(v -> {
+            if(mBlocking) return;
+            gameField.performBack();
+            backClickAnim();
+            block(500);
+        });
 
         //touch area setup
         mTouchArea.gameField = gameField;
@@ -91,21 +103,34 @@ public class Game extends AnimatedFragment {
             @Override
             public void onMoveCompleted() {
                 if(!gameField.canUserMove()) {
-                    mActivity.showDialog(300, Dialog.MODE_LOST);
+
+                    handler.postDelayed(() -> {
+                        if(Database.currentMode.backs > 0) {
+                            mActivity.showDialog(300, Dialog.MODE_LOST_BACKABLE);
+                        } else {
+                            if(Utils.isOnline(getContext())) {
+                                mActivity.showDialog(300, Dialog.MODE_LOST_VIDEO);
+                            } else {
+                                mActivity.showDialog(300, Dialog.MODE_LOST_NO_INTERNET);
+                            }
+
+                        }
+                    }, 200);
+
                     disableAll();
-//                    Log.e("djsfl", "lost");
+                } else {
+                    refreshBackState();
                 }
             }
 
             @Override
             public void onMove(int direction) {
-
             }
 
             @Override
             public void onJoin(int newPoints) {
                 // --> no animation --> see gamefield
-                points += newPoints;
+                Database.currentMode.points += newPoints;
                 updatePointsText();
 
                 if(newPoints == 2048) {
@@ -113,31 +138,88 @@ public class Game extends AnimatedFragment {
                     disableAll();
                 }
 
-                if(points > Database.currentMode.best) {
-                    Database.currentMode.best = points;
+                // TODO: 22.08.2018 optimize --> method in mode
+                if(Database.currentMode.points > Database.currentMode.record) {
+                    Database.currentMode.record = Database.currentMode.points;
                 }
+
+                updateRecordText();
+            }
+
+            @Override
+            public void onBackCompleted() {
+                Database.currentMode.backs--;
+                refreshBackState();
             }
         });
 
         //points reset
-        mTvPoints.setText(String.valueOf(points));
+        updatePointsText();
+        updateRecordText();
+
+        //hide back
+        mLyBack.setVisibility(View.INVISIBLE);
+    }
+
+    private void refreshBackState() {
+
+        if(Database.currentMode.backs == 0 || !gameField.canPerformBack()) {
+            hideBack();
+        } else {
+            mTvBackCount.setText(String.valueOf(Database.currentMode.backs));
+            showBack();
+        }
 
     }
 
+    private void showBack() {
+        if(mBackShown) return;
+        mBackShown = true;
+
+        mLyBack.setVisibility(View.VISIBLE);
+        mLyBack.setTranslationX(mLyBack.getWidth());
+        mLyBack.setAlpha(1);
+        AnimUtils.animateTranslationX(mLyBack, new DecelerateInterpolator(2), 0, 200, 0);
+
+    }
+
+    private void hideBack() {
+        if(!mBackShown) return;
+        mBackShown = false;
+
+        AnimUtils.animateTranslationX(mLyBack, new AccelerateInterpolator(2), mLyBack.getWidth(), 200, 0);
+
+    }
+
+    private void backClickAnim() {
+        if(!mBackShown) return;
+
+        AnimUtils.animateTranslationX(mLyBack, new AccelerateInterpolator(), mLyBack.getWidth() * 0.1f, 150, 0);
+
+        handler.postDelayed(() -> {
+            AnimUtils.animateTranslationX(mLyBack, new DecelerateInterpolator(), 0, 150, 0);
+        }, 150);
+
+    }
 
     public void disableAll() {
 
         gameField.setEnabled(false);
         mBtnPause.setEnabled(false);
+        mLyBack.setEnabled(false);
 
         long duration = 200;
         float alpha = 0.1f;
 
         AnimUtils.animateAlpha(gameField, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
-        AnimUtils.animateAlpha(mBtnPause, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mTvPoints, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
+        AnimUtils.animateAlpha(mTvRecord, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mVDivOne, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mVDivTwo, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
+
+        if(mLyBack.getVisibility() == View.VISIBLE) {
+            AnimUtils.animateAlpha(mLyBack, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
+        }
 
         AnimUtils.animateAlpha(mBtnPause, new AccelerateDecelerateInterpolator(), 0, duration, 0);
     }
@@ -146,6 +228,7 @@ public class Game extends AnimatedFragment {
 
         gameField.setEnabled(true);
         mBtnPause.setEnabled(true);
+        mLyBack.setEnabled(true);
 
         long duration = 200;
         float alpha = 1f;
@@ -153,9 +236,11 @@ public class Game extends AnimatedFragment {
         AnimUtils.animateAlpha(gameField, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mBtnPause, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mTvPoints, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
+        AnimUtils.animateAlpha(mTvRecord, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mVDivOne, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
         AnimUtils.animateAlpha(mVDivTwo, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
-        AnimUtils.animateAlpha(mBtnPause, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
+        if(mBackShown) AnimUtils.animateAlpha(mLyBack, new AccelerateDecelerateInterpolator(), alpha, duration, 0);
+
     }
 
 
@@ -166,19 +251,26 @@ public class Game extends AnimatedFragment {
 
     public void restart() {
         enableAll();
+        Database.currentMode.points = 0;
+        Database.currentMode.backs = Database.START_BACK_VALUE;
         reset();
+        refreshBackState();
         handler.postDelayed(() -> gameField.showStartTiles(), 500);
     }
 
     private void reset() {
         gameField.clear();
-        points = 0;
-        mTvPoints.setText("0");
+        updatePointsText();
+        updateRecordText();
         gameField.setFieldSize(Database.currentMode.fieldSize);
     }
 
     public void updatePointsText() {
-        mTvPoints.setText(String.valueOf(points));
+        mTvPoints.setText(String.valueOf(Database.currentMode.points));
+    }
+
+    public void updateRecordText() {
+        mTvRecord.setText(getString(R.string.temp_best, Database.currentMode.record));
     }
 
     @Override
@@ -187,6 +279,9 @@ public class Game extends AnimatedFragment {
         reset();
 
         mRoot.setVisibility(View.VISIBLE);
+
+        mLyBack.setVisibility(View.INVISIBLE);
+        mBackShown = false;
 
         long moveDuration = 700;
 
@@ -204,10 +299,16 @@ public class Game extends AnimatedFragment {
         AnimUtils.animateAlpha(mTvPoints, new DecelerateInterpolator(2), 1, moveDuration, delay);
         AnimUtils.animateTranslationY(mTvPoints, new DecelerateInterpolator(2), 0, moveDuration, delay);
 
+        //record
+
+        mTvRecord.setAlpha(0f);
+        mTvRecord.setTranslationY(30);
+        AnimUtils.animateAlpha(mTvRecord, new DecelerateInterpolator(2), 1, moveDuration, delay);
+        AnimUtils.animateTranslationY(mTvRecord, new DecelerateInterpolator(2), 0, moveDuration, delay);
         delay += 200;
 
         //point dividers
-        long scaleDuration = 350;
+        long scaleDuration = 300;
 
         mVDivOne.setAlpha(0f);
         mVDivOne.setScaleX(0.1f);
@@ -219,7 +320,7 @@ public class Game extends AnimatedFragment {
         AnimUtils.animateAlpha(mVDivTwo, new DecelerateInterpolator(2), 1, scaleDuration, delay);
         AnimUtils.animateScaleX(mVDivTwo, new DecelerateInterpolator(2), 1, scaleDuration, delay);
 
-        delay += 250;
+        delay += 150;
 
         //gamefield
         gameField.setVisibility(View.INVISIBLE);
@@ -229,25 +330,23 @@ public class Game extends AnimatedFragment {
             gameField.animateIn();
         }, delay);
 
-        delay += 750;
+        delay += 500;
 
 //        gameField.setTranslationY(50);
 //        AnimUtils.animateAlpha(gameField, new DecelerateInterpolator(), 1, moveDuration, delay);
 //        AnimUtils.animateTranslationY(gameField, new DecelerateInterpolator(), 0, moveDuration, delay);
 
-
-
         if(!loadGame) {
             handler.postDelayed(() -> gameField.showStartTiles(), delay);
         } else {
             handler.postDelayed(() -> {
-                gameField.setSaveImage(Database.currentMode.saved);
-                points = Database.currentMode.savedPoints;
-                updatePointsText();
+                gameField.setSaveImageAndAnimate(Database.currentMode.saved);
             }, delay);
-        }
 
-        mActivity.animateBgScale(1.4f, 0, 1000);
+            delay += 400;
+
+            handler.postDelayed(this::refreshBackState, delay);
+        }
 
     }
 

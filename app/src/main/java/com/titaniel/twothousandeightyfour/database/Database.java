@@ -3,6 +3,7 @@ package com.titaniel.twothousandeightyfour.database;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.titaniel.twothousandeightyfour.R;
 import com.titaniel.twothousandeightyfour.fragments.game.GameField;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Database {
+
+    public static final int START_BACK_VALUE = 3;
 
     public static class Achievement {
 
@@ -31,10 +34,10 @@ public class Database {
 
         final public String representative;
         final public int fieldSize;
-        public int best = 0;
+        public int record = 0;
         final int id;
         public ArrayList<GameField.FieldImage> saved;
-        public int savedPoints = 0;
+        public int points = 0, backs = 0;
 
         public Mode(String representative, int fieldSize, int id) {
             this.representative = representative;
@@ -48,9 +51,9 @@ public class Database {
             if(o == null || getClass() != o.getClass()) return false;
             Mode mode = (Mode) o;
             return fieldSize == mode.fieldSize &&
-                    best == mode.best &&
+                    record == mode.record &&
                     id == mode.id &&
-                    savedPoints == mode.savedPoints &&
+                    points == mode.points &&
                     Objects.equals(representative, mode.representative) &&
                     Objects.equals(saved, mode.saved);
         }
@@ -58,7 +61,7 @@ public class Database {
         @Override
         public int hashCode() {
 
-            return Objects.hash(representative, fieldSize, best, id, saved, savedPoints);
+            return Objects.hash(representative, fieldSize, record, id, saved, points);
         }
     }
 
@@ -71,13 +74,15 @@ public class Database {
     public static Achievement[] achievements;
 
     public static final Mode[] modes = {
+            new Mode("3x3", 3, -1),
             new Mode("4x4", 4, 0),
             new Mode("5x5", 5, 1),
             new Mode("6x6", 6, 2),
             new Mode("7x7", 7, 3),
-            new Mode("8x8", 8, 4)
+            new Mode("8x8", 8, 4),
+            new Mode("9x9", 9, 5)
     };
-    public static Mode currentMode = modes[0];
+    public static Mode currentMode = modes[1];
 
     private static SharedPreferences sPrefs;
 
@@ -142,36 +147,66 @@ public class Database {
         return res;
     }
 
-    public static void load() {
+    private static String imageToString(ArrayList<GameField.FieldImage> img) {
+        if(img == null || img.size() == 0) return "";
+        StringBuilder result = new StringBuilder();
 
-        for(Mode mode : modes) {
-            mode.best = sPrefs.getInt("best-" + mode.id, 0);
-            mode.savedPoints = sPrefs.getInt("savedPoints-" + mode.id, 0);
-
-            int[][] lastImage = stringToTwoDimIntArray(sPrefs.getString("lastImage-" + mode.id, null));
-
-            if(lastImage != null) {
-                mode.saved = new ArrayList<>();
-                mode.saved.add(new GameField.FieldImage(lastImage));
-            }
+        for(GameField.FieldImage image : img) {
+            result.append("+");
+            result.append(twoDimIntArrayToString(image.image));
+            result.append("-");
         }
 
+        return result.toString();
+    }
+
+    private static ArrayList<GameField.FieldImage> stringToImage(String string) {
+        if(string == null) return null;
+        ArrayList<GameField.FieldImage> result = new ArrayList<>();
+
+        StringBuilder builder = new StringBuilder(string);
+
+        while(builder.toString().contains("+")) {
+            int dexPlus = builder.indexOf("+");
+            int dexMinus = builder.indexOf("-");
+            String sub = builder.substring(dexPlus+1, dexMinus);
+            result.add(new GameField.FieldImage(stringToTwoDimIntArray(sub)));
+
+            builder.replace(0, dexMinus+1, "");
+        }
+
+        return result;
+    }
+
+    public static void load() {
+
+        long time = System.nanoTime();
+
+        for(Mode mode : modes) {
+            mode.record = sPrefs.getInt("record-" + mode.id, 0);
+            mode.points = sPrefs.getInt("points-" + mode.id, 0);
+            mode.backs = sPrefs.getInt("backs-" + mode.id, 0);
+
+            mode.saved = stringToImage(sPrefs.getString("image-" + mode.id, null));
+        }
+
+        Log.e("load_duration", "time: " + (System.nanoTime()-time));
     }
 
     public static void save() {
         SharedPreferences.Editor editor = sPrefs.edit();
 
         for(Mode mode : modes) {
-            editor.putInt("best-" + mode.id, mode.best);
-            editor.putInt("savedPoints-" + mode.id, mode.savedPoints);
+            editor.putInt("record-" + mode.id, mode.record);
+            editor.putInt("points-" + mode.id, mode.points);
+            editor.putInt("backs-" + mode.id, mode.backs);
 
-            String lastImage = null;
+            String image = null;
             if(mode.saved != null && mode.saved.size() > 0) {
-                lastImage = twoDimIntArrayToString(mode.saved.get(mode.saved.size()-1).image);
+                image = imageToString(mode.saved);
             }
 
-
-            editor.putString("lastImage-" + mode.id, lastImage);
+            editor.putString("image-" + mode.id, image);
         }
 
         editor.apply();

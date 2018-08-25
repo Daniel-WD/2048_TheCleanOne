@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +19,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.titaniel.twothousandeightyfour.MainActivity;
 import com.titaniel.twothousandeightyfour.R;
 import com.titaniel.twothousandeightyfour.database.Database;
@@ -89,6 +93,7 @@ public class Home extends AnimatedFragment {
 
         //rate
         mBtnRate.setOnClickListener(v -> {
+            if(mBlocking) return;
             Uri uri = Uri.parse("market://details?id=" + getContext().getPackageName());
             Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
             goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
@@ -104,12 +109,16 @@ public class Home extends AnimatedFragment {
 
         //resume
         mBtnResume.setOnClickListener(v -> {
+            if(mBlocking) return;
             mActivity.game.loadGame = true;
             mActivity.showGame(0, this);
         });
 
         //play
         mBtnPlay.setOnClickListener(v -> {
+            if(mBlocking) return;
+            Database.currentMode.points = 0;
+            Database.currentMode.backs = Database.START_BACK_VALUE;
             mActivity.game.loadGame = false;
             mActivity.showGame(0, this);
         });
@@ -171,7 +180,7 @@ public class Home extends AnimatedFragment {
     private void setMode(Database.Mode mode) {
         if(mode == null) return;
         mTvMode.setText(mode.representative);
-        mTvModeBest.setText(getString(R.string.temp_best, mode.best));
+        mTvModeBest.setText(getString(R.string.temp_best, mode.record));
     }
 
     private void changeMode(boolean previous) {
@@ -236,6 +245,8 @@ public class Home extends AnimatedFragment {
     @Override
     protected void animateShow(long delay) {
 
+        block(1400);
+
         setMode(Database.currentMode);
 //        checkPeriph();
 
@@ -296,9 +307,7 @@ public class Home extends AnimatedFragment {
         mIvBtnsShadow.setAlpha(0f);
         AnimUtils.animateAlpha(mIvBtnsShadow, new DecelerateInterpolator(2), 1, dur, delay);
 
-
-
-        delay += 450;
+        delay += 250;
 
         //buttons
         long buttonDuration = 800;
@@ -324,7 +333,7 @@ public class Home extends AnimatedFragment {
 //        AnimUtils.animateTranslationY(mBtnRate, new DecelerateInterpolator(), 0, buttonDuration, delay);
 
 
-        delay += 350;
+        delay += 300;
 
         mVDivOne.setScaleX(0.1f);
         mVDivOne.setAlpha(0);
@@ -440,7 +449,7 @@ public class Home extends AnimatedFragment {
         delay += 100;
 
         //ly buttons
-        long duration = 300;
+        long duration = 200;
         TimeInterpolator interpolator = new AccelerateDecelerateInterpolator();
 
         float newScale = (float) mRoot.getHeight()/(float) mLyButtons.getHeight();
@@ -453,13 +462,13 @@ public class Home extends AnimatedFragment {
         AnimUtils.animateTranslationY(mLyButtons, interpolator, translY, duration, delay);
         AnimUtils.animateTranslationY(mIvBtnsShadow, interpolator, translY, duration, delay);
 
-        AnimUtils.animateAlpha(mIvBtnsShadow, interpolator, 0, duration, delay);
+        //AnimUtils.animateAlpha(mIvBtnsShadow, interpolator, 0, duration, delay);
 
         delay += 400;
 
         handler.postDelayed(() -> mRoot.setVisibility(View.INVISIBLE), delay);
 
-        return 400;
+        return 300;
     }
 
 }

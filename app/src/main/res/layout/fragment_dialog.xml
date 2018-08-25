@@ -31,7 +31,7 @@
         android:background="@color/snow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5">
+        app:layout_constraintVertical_bias="0.53">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/lyWon"
@@ -141,7 +141,7 @@
 
 
             <TextView
-                android:id="@+id/tvLost"
+                android:id="@+id/tvLostNoInternet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
@@ -155,7 +155,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
-                android:id="@+id/btnLostRestart"
+                android:id="@+id/btnLostRestartNoInternet"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
@@ -172,7 +172,7 @@
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvLost" />
+                app:layout_constraintTop_toBottomOf="@+id/tvLostNoInternet" />
 
             <View
                 android:id="@+id/vLostDiv"
@@ -182,10 +182,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.503"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnLostRestart" />
+                app:layout_constraintTop_toBottomOf="@+id/btnLostRestartNoInternet" />
 
             <Button
-                android:id="@+id/btnLostHome"
+                android:id="@+id/btnLostHomeNoInternet"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
@@ -212,7 +212,7 @@
             android:visibility="visible">
 
             <Button
-                android:id="@+id/btnPauseHome"
+                android:id="@+id/btnPauseRestart"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
@@ -221,11 +221,11 @@
                 android:fontFamily="sans-serif"
                 android:paddingBottom="16dp"
                 android:paddingTop="20dp"
-                android:text="@string/home"
+                android:text="@string/restart"
                 android:textAllCaps="false"
                 android:textColor="@color/black"
-                android:textStyle="bold"
                 android:textSize="25sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -237,10 +237,10 @@
                 android:background="#32000000"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnPauseHome" />
+                app:layout_constraintTop_toBottomOf="@+id/btnPauseRestart" />
 
             <Button
-                android:id="@+id/btnPauseRestart"
+                android:id="@+id/btnPauseHome"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
@@ -249,7 +249,7 @@
                 android:fontFamily="sans-serif"
                 android:paddingBottom="16dp"
                 android:paddingTop="16dp"
-                android:text="@string/restart"
+                android:text="@string/home"
                 android:textAllCaps="false"
                 android:textColor="@color/black"
                 android:textSize="25sp"
@@ -264,7 +264,7 @@
                 android:background="#32000000"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnPauseRestart" />
+                app:layout_constraintTop_toBottomOf="@+id/btnPauseHome" />
 
             <Button
                 android:id="@+id/btnPauseBack"
@@ -283,6 +283,235 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/vPauseDivTwo" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/lyLostBackable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvLostBackable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
+                android:text="@string/lost"
+                android:textColor="@color/black"
+                android:textSize="27sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/btnLostUndoBackable"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:background="@android:color/transparent"
+                android:elevation="0dp"
+                android:fontFamily="sans-serif"
+                android:paddingBottom="16dp"
+                android:paddingTop="20dp"
+                android:text="@string/undo"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvLostBackable" />
+
+            <View
+                android:id="@+id/vLostDivOneBackable"
+                android:layout_width="235dp"
+                android:layout_height="0.5dp"
+                android:background="#32000000"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnLostUndoBackable" />
+
+            <Button
+                android:id="@+id/btnLostRestartBackable"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/transparent"
+                android:elevation="0dp"
+                android:fontFamily="sans-serif"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:text="@string/restart"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vLostDivOneBackable" />
+
+            <View
+                android:id="@+id/vLostDivTwoBackable"
+                android:layout_width="235dp"
+                android:layout_height="0.5dp"
+                android:background="#32000000"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnLostRestartBackable" />
+
+            <Button
+                android:id="@+id/btnLostHomeBackable"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:elevation="0dp"
+                android:fontFamily="sans-serif"
+                android:paddingBottom="26dp"
+                android:paddingTop="18dp"
+                android:text="@string/home"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vLostDivTwoBackable" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/lyLostVideo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tvLostVideo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:fontFamily="sans-serif-black"
+                android:letterSpacing="0.08"
+                android:text="@string/lost"
+                android:textColor="@color/black"
+                android:textSize="27sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/lyNewBacks"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvLostVideo">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="21dp"
+                    android:src="@drawable/ic_video"
+                    android:tint="#36D7B7" />
+
+
+                <View
+                    android:id="@+id/vVideoDivider"
+                    android:layout_width="0.5dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginEnd="10.5dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="21dp"
+                    android:background="#32000000" />
+
+                <Button
+                    android:id="@+id/btnLostNewBacksVideo"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:background="@android:color/transparent"
+                    android:elevation="0dp"
+                    android:fontFamily="sans-serif"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="20dp"
+                    android:text="@string/get_backs"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                    android:textSize="25sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/vLostDivOneVideo"
+                android:layout_width="235dp"
+                android:layout_height="0.5dp"
+                android:background="#32000000"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lyNewBacks" />
+
+            <Button
+                android:id="@+id/btnLostRestartVideo"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/transparent"
+                android:elevation="0dp"
+                android:fontFamily="sans-serif"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                android:text="@string/restart"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vLostDivOneVideo" />
+
+            <View
+                android:id="@+id/vLostDivTwoVideo"
+                android:layout_width="235dp"
+                android:layout_height="0.5dp"
+                android:background="#32000000"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnLostRestartVideo" />
+
+            <Button
+                android:id="@+id/btnLostHomeVideo"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:elevation="0dp"
+                android:fontFamily="sans-serif"
+                android:paddingBottom="26dp"
+                android:paddingTop="18dp"
+                android:text="@string/home"
+                android:textAllCaps="false"
+                android:textColor="@color/black"
+                android:textSize="25sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/vLostDivTwoVideo" />
 
         </android.support.constraint.ConstraintLayout>
 

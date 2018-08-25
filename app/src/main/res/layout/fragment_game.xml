@@ -10,11 +10,11 @@
     <com.titaniel.twothousandeightyfour.fragments.game.TouchArea
         android:id="@+id/touchArea"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="492dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvPoints" />
+        app:layout_constraintTop_toBottomOf="@+id/lyPoints" />
 
     <View
         android:id="@+id/vDivOne"
@@ -22,7 +22,7 @@
         android:layout_height="0.5dp"
         android:layout_marginBottom="9dp"
         android:background="#28000000"
-        app:layout_constraintBottom_toTopOf="@+id/tvPoints"
+        app:layout_constraintBottom_toTopOf="@+id/lyPoints"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -30,31 +30,46 @@
         android:id="@+id/vDivTwo"
         android:layout_width="180dp"
         android:layout_height="0.5dp"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="7dp"
         android:background="#28000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvPoints" />
+        app:layout_constraintTop_toBottomOf="@+id/lyPoints" />
 
-    <TextView
-        android:id="@+id/tvPoints"
+    <LinearLayout
+        android:id="@+id/lyPoints"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:fontFamily="sans-serif-light"
-        android:includeFontPadding="false"
-        android:textColor="@color/black"
-        android:letterSpacing="0.00"
-        android:textSize="31sp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/gameField"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.55"
-        tools:text="29387" />
+        app:layout_constraintVertical_bias="0.55">
+
+        <TextView
+            android:id="@+id/tvPoints"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:includeFontPadding="false"
+            android:textColor="@color/black"
+            android:textSize="31sp"
+            tools:text="29387" />
+
+        <TextView
+            android:id="@+id/tvRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
+            android:fontFamily="sans-serif-light"
+            android:includeFontPadding="false"
+            android:text="Record: 256"
+            android:textColor="@color/black"
+            android:textSize="13sp" />
+
+    </LinearLayout>
 
     <com.titaniel.twothousandeightyfour.fragments.game.GameField
         android:id="@+id/gameField"
@@ -80,5 +95,45 @@
         android:src="@drawable/ic_pause"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/lyBack"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_round_rect_outline"
+        app:layout_constraintBottom_toBottomOf="@+id/vDivTwo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/vDivOne">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/ic_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.46"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.48" />
+
+        <TextView
+            android:id="@+id/tvBackCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:text="3"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.85" />
+
+
+    </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -21,7 +22,6 @@ import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 
 import com.titaniel.twothousandeightyfour.R;
 
@@ -30,6 +30,8 @@ import java.util.Collections;
 import java.util.Random;
 
 public class GameField extends View {
+
+    public static final int MAX_IMAGE_SIZE = 20;
 
     interface SelectListener {
         void onTileSelected(Tile tile);
@@ -45,6 +47,8 @@ public class GameField extends View {
         void onJoin(int newNumber);
 
         void onMoveCompleted();
+
+        void onBackCompleted();
     }
 
     private MoveListener mMoveListener = null;
@@ -146,7 +150,7 @@ public class GameField extends View {
             anim.setInterpolator(new FastOutSlowInInterpolator());
             anim.start();
 
-            ValueAnimator rotationAnim = ValueAnimator.ofFloat(-40, 0);
+            ValueAnimator rotationAnim = ValueAnimator.ofFloat(mRandom.nextInt(80) - 40, 0);
             rotationAnim.addUpdateListener(valueAnimator -> {
                 borderRotation = (float) valueAnimator.getAnimatedValue();
                 invalidate();
@@ -350,8 +354,8 @@ public class GameField extends View {
     private int mBorderColor;
     private int mDividerColor;
 
-    private final float mBorderWidth = 1f;
-    private final float mDividerWidth = 0.8f;
+    private final float mBorderWidth = 1f; //1f
+    private final float mDividerWidth = 0.8f; //0.8f
     private final float mTileBorderWidth = 2f;
     //    private final float mTileBorderWidth = 2f;
     private final float mMinSwipeDistance = 10;
@@ -362,7 +366,7 @@ public class GameField extends View {
     private final float mTileScale = 0.77f;
     private final float mTileRadiusRatio = 0.042f;
     private final float mTextSizeRatio = 0.55f;
-    private final float mFieldScale = 0.98f;
+    private final float mFieldScale = 1f; //0.98
 
     private int mWidth, mHeight;
 
@@ -378,10 +382,13 @@ public class GameField extends View {
 
     private Tile mDownTile = null;
 
-    private Path mBaseTilePath;
+    private Path mBaseTilePath, mBorderPath, mDividersPath;
 
     public GameField(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+
+//        setScaleX(2f - mFieldScale);
+//        setScaleY(2f - mFieldScale);
 
         mBorderColor = ContextCompat.getColor(context, R.color.game_border_color);
         mDividerColor = ContextCompat.getColor(context, R.color.game_divider_color);
@@ -436,7 +443,6 @@ public class GameField extends View {
             //firstColor[0] -= 30;
             thirdColor[2] -= 0.1f;
         }
-
     }
 
     public void animateIn() {
@@ -546,7 +552,15 @@ public class GameField extends View {
             mImages.remove(mImages.size() - 1);
         }, REMOVE_DURATION);
 
+        postDelayed(() -> {
+            if(mMoveListener != null) mMoveListener.onBackCompleted();
+        }, REMOVE_DURATION*2);
+
         return true;
+    }
+
+    public boolean canPerformBack() {
+        return mImages.size() != 0;
     }
 
     public void deleteTile(Tile tile) {
@@ -601,7 +615,7 @@ public class GameField extends View {
         return save;
     }
 
-    public void setSaveImage(ArrayList<FieldImage> images) {
+    public void setSaveImageAndAnimate(ArrayList<FieldImage> images) {
         if(images == null) return;
         canMove = false;
         int[][] last = images.get(images.size() - 1).image;
@@ -610,12 +624,12 @@ public class GameField extends View {
                 if(last[i][j] == 0) continue;
                 Tile newTile = new Tile(i, j, last[i][j]);
                 mTiles.add(newTile);
-                newTile.animateRegeneration(mRandom.nextInt(400));
+                newTile.animateRegeneration(mRandom.nextInt(300));
             }
         }
         if(images.size() > 0) images.remove(images.size() - 1);
         mImages = images;
-        postDelayed(() -> canMove = true, 400);
+        postDelayed(() -> canMove = true, 300);
     }
 
 
@@ -775,7 +789,8 @@ public class GameField extends View {
     }
 
     private void moveCompleted() {
-        Log.d("canMove", "no move --> no tile generated --> set to true");
+        Log.d("tilesize", "" + mTiles.size());
+        Log.d("imagesize", "" + mImages.size());
         if(mMoveListener != null) mMoveListener.onMoveCompleted();
         canMove = true;
     }
@@ -821,6 +836,7 @@ public class GameField extends View {
     }
 
     private void saveBackup() {
+        if(mImages.size() == MAX_IMAGE_SIZE) mImages.remove(0);
         mImages.add(new FieldImage(buildFieldImage()));
     }
 
@@ -858,27 +874,34 @@ public class GameField extends View {
 
     public void clear() {
         mTiles.clear();
+        mImages.clear();
         invalidate();
     }
+
+    Rect textRect = new Rect();
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+//        long first = System.nanoTime();
+
 //        canvas.save();
 //
 //        canvas.scale(mFieldScale, mFieldScale, canvas.getWidth()/2, canvas.getHeight()/2);
 
-        long first = System.currentTimeMillis();
 
 //        canvas.drawRect(0, 0, mWidth, mHeight, mWhitePaint);
         //canvas.drawRect(0, 0, mWidth, mHeight, mBorderPaint);
 
         float halfNegative = mFullBlockSize*(1 - mDividerScale)/2;
-
         float borderLength = getWidth() - 2*halfNegative;
-
         float borderMargin = halfNegative + (1 - mBorderScale)*borderLength/2;
+
+//        if(mDividerScale == 1 && mBorderScale == 1) {
+//            canvas.drawPath(mBorderPath, mBorderPaint);
+//            canvas.drawPath(mDividersPath, mDividerPaint);
+//        } else {
 
         //left border
         canvas.drawLine(0, borderMargin, 0, mHeight - borderMargin, mBorderPaint);
@@ -892,6 +915,7 @@ public class GameField extends View {
         //bottom border
         canvas.drawLine(borderMargin, mHeight, mWidth - borderMargin, mHeight, mBorderPaint);
 
+
         for(int i = 0; i < mFieldSize; i++) {
             for(int j = 0; j < mFieldSize; j++) {
                 if(i != 0)
@@ -900,9 +924,11 @@ public class GameField extends View {
                     canvas.drawLine(mFullBlockSize*i + halfNegative, mFullBlockSize*j, mFullBlockSize*(i + 1) - halfNegative, mFullBlockSize*j, mDividerPaint);
             }
         }
+//        }
 
+
+        float radius = (mFullBlockSize - halfNegative*2)*mTileRadiusRatio;
         for(Tile tile : mTiles) {
-            float radius = (mFullBlockSize - halfNegative*2)*mTileRadiusRatio;
 
             canvas.save();
             canvas.translate(tile.x + halfNegative, tile.y + halfNegative);
@@ -914,12 +940,11 @@ public class GameField extends View {
             mTilePaint.setColor(mColorMap.get(tile.number));
             mTextPaint.setColor(mColorMap.get(tile.number));
 
-//            mTextPaint.setColor(Color.WHITE);
-
             canvas.save();
             if(tile.borderRotation + tile.rotation != 0 && tile.borderRotation + tile.rotation != 360) {
                 canvas.rotate(tile.borderRotation + tile.rotation, realTileSize()/2, realTileSize()/2);
             }
+
 //            canvas.drawPath(mBaseTilePath, mTilePaint);
             canvas.drawRoundRect(0, 0, realTileSize(), realTileSize(),
                     radius, radius, mTilePaint);
@@ -930,26 +955,41 @@ public class GameField extends View {
                 canvas.rotate(tile.rotation, realTileSize()/2, realTileSize()/2);
             }
 
+//            long first = System.nanoTime();
+
             String text = String.valueOf(tile.number);
 
             float textScale = mScalings[text.length() - 1];
             mTextPaint.setTextSize(mTextSizePx*textScale);
 
-            mDynamicText.clear();
-            mDynamicText.append(text);
+//            Log.e("draw::checkTWO", String.valueOf(System.nanoTime() - first));
+//            first = System.nanoTime();
 
-            float yOffset = (realTileSize() - mDynamicLayout.getHeight())/2;
-//            canvas.save();
+            textRect.setEmpty();
+            mTextPaint.getTextBounds(text, 0, text.length(), textRect);
+
+            float textWidth = mTextPaint.measureText(text);
+
+//            Log.e("draw::checkTHREE", String.valueOf(System.nanoTime() - first));
+//            first = System.nanoTime();
+
+            float yOffset = (realTileSize() + textRect.height())/2 - 1;
             canvas.translate(0, yOffset);
 
-            mDynamicLayout.draw(canvas);
+            canvas.drawText(text, ((float) mFullBlockSize - 2*halfNegative)/2f - textWidth/2 - 1, 0, mTextPaint);
 
             canvas.restore();
+
+//            Log.e("draw::checkFOUR", String.valueOf(System.nanoTime() - first));
+//            Log.e("draw::check", "------------------------------------------------------------------------------------");
+
         }
 
 //        canvas.restore();
 
-        Log.e("draw::duration", String.valueOf(System.currentTimeMillis() - first));
+
+//        Log.e("draw::check", String.valueOf(System.nanoTime() - first));
+//        first = System.nanoTime();
 
     }
 
@@ -1042,6 +1082,45 @@ public class GameField extends View {
         float radius = (mFullBlockSize - halfNegative*2)*mTileRadiusRatio;
         mBaseTilePath.addRoundRect(0, 0, realTileSize(), realTileSize(),
                 radius, radius, Path.Direction.CW);
+
+        // border path
+        mBorderPath = new Path();
+
+        float borderLength = getWidth() - 2*halfNegative;
+
+        float borderMargin = halfNegative + (1 - mBorderScale)*borderLength/2;
+
+        //left border
+        mBorderPath.moveTo(0, borderMargin);
+        mBorderPath.lineTo(0, mHeight - borderMargin);
+
+        //right border
+        mBorderPath.moveTo(mWidth, borderMargin);
+        mBorderPath.lineTo(mWidth, mHeight - borderMargin);
+
+        //top border
+        mBorderPath.moveTo(borderMargin, 0);
+        mBorderPath.lineTo(mWidth - borderMargin, 0);
+
+        //bottom border
+        mBorderPath.moveTo(borderMargin, mHeight);
+        mBorderPath.lineTo(mWidth - borderMargin, mHeight);
+
+        //dividers path
+        mDividersPath = new Path();
+
+        for(int i = 0; i < mFieldSize; i++) {
+            for(int j = 0; j < mFieldSize; j++) {
+                if(i != 0) {
+                    mDividersPath.moveTo(mFullBlockSize*i, mFullBlockSize*j + halfNegative);
+                    mDividersPath.lineTo(mFullBlockSize*i, mFullBlockSize*(j + 1) - halfNegative);
+                }
+                if(j != 0) {
+                    mDividersPath.moveTo(mFullBlockSize*i + halfNegative, mFullBlockSize*j);
+                    mDividersPath.lineTo(mFullBlockSize*(i + 1) - halfNegative, mFullBlockSize*j);
+                }
+            }
+        }
 
     }
 
