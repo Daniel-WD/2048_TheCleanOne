@@ -14,14 +14,68 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.reward.RewardItem;
+import com.google.android.gms.ads.reward.RewardedVideoAd;
+import com.google.android.gms.ads.reward.RewardedVideoAdListener;
 import com.titaniel.twothousandeightyfour.MainActivity;
 import com.titaniel.twothousandeightyfour.R;
+import com.titaniel.twothousandeightyfour.admob.Admob;
 import com.titaniel.twothousandeightyfour.database.Database;
 import com.titaniel.twothousandeightyfour.utils.AnimUtils;
 
 import jp.wasabeef.blurry.Blurry;
 
 public class Dialog extends AnimatedFragment {
+
+    private RewardedVideoAdListener mAdListener = new RewardedVideoAdListener() {
+
+        boolean reward = false;
+
+        @Override
+        public void onRewardedVideoAdLoaded() {
+
+        }
+
+        @Override
+        public void onRewardedVideoAdOpened() {
+
+        }
+
+        @Override
+        public void onRewardedVideoStarted() {
+
+        }
+
+        @Override
+        public void onRewardedVideoAdClosed() {
+            handler.postDelayed(() -> {
+                Database.currentMode.backs += 4;
+                mBtnLostUndoBackable.callOnClick();
+            }, 200);
+        }
+
+        @Override
+        public void onRewarded(RewardItem rewardItem) {
+            reward = true;
+        }
+
+        @Override
+        public void onRewardedVideoAdLeftApplication() {
+
+        }
+
+        @Override
+        public void onRewardedVideoAdFailedToLoad(int i) {
+
+        }
+
+        @Override
+        public void onRewardedVideoCompleted() {
+
+        }
+    };
 
     public static final int MODE_LOST_NO_INTERNET = 0;
     public static final int MODE_WON = 1;
@@ -72,6 +126,8 @@ public class Dialog extends AnimatedFragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        Admob.rewardedVideoAdListener = mAdListener;
 
         mActivity = (MainActivity) getActivity();
 
@@ -169,9 +225,9 @@ public class Dialog extends AnimatedFragment {
 
             // TODO: 23.08.2018 VIDEO
 
-            Database.currentMode.backs += 4;
-
-            mBtnLostUndoBackable.callOnClick();
+            if (Admob.rewardedVideoAd.isLoaded()) {
+                Admob.rewardedVideoAd.show();
+            }
 
         });
 

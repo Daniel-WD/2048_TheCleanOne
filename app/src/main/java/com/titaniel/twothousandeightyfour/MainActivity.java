@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.google.android.gms.ads.MobileAds;
+import com.titaniel.twothousandeightyfour.admob.Admob;
 import com.titaniel.twothousandeightyfour.database.Database;
 import com.titaniel.twothousandeightyfour.fragments.Dialog;
 import com.titaniel.twothousandeightyfour.fragments.game.Game;
@@ -39,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //admob
+        Admob.init(this);
+
         //Database
         Database.init(this);
 
@@ -53,17 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         mHandler.postDelayed(() -> showHome(0, null), 800);
 //        mHandler.postDelayed(() -> showDialog(0, Dialog.MODE_LOST_VIDEO), 800);
-    }
 
-    public void animateBgScale(float scale, long delay, long duration) {
-
-        /*mIvBackground.animate()
-                .setStartDelay(delay)
-                .setInterpolator(new FastOutSlowInInterpolator())
-                .setDuration(duration)
-                .scaleY(scale)
-                .scaleX(scale)
-                .start();*/
 
     }
 
@@ -105,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
         decorView.setSystemUiVisibility(uiOptions);
 
         Database.load();
+
+        Admob.rewardedVideoAd.resume(this);
     }
 
     @Override
@@ -116,6 +113,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Database.save();
+
+        Admob.rewardedVideoAd.pause(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Admob.rewardedVideoAd.destroy(this);
     }
 
     @Override
