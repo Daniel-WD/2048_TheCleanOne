@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         //views
         //mIvBackground = findViewById(R.id.ivBackground);
 
-        mHandler.postDelayed(() -> showHome(0, null), 800);
+        mHandler.postDelayed(() -> showHome(0, null), 900);
 //        mHandler.postDelayed(() -> showDialog(0, Dialog.MODE_LOST_VIDEO), 800);
 
 

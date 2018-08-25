@@ -50,10 +50,13 @@ public class Dialog extends AnimatedFragment {
 
         @Override
         public void onRewardedVideoAdClosed() {
-            handler.postDelayed(() -> {
-                Database.currentMode.backs += 4;
-                mBtnLostUndoBackable.callOnClick();
-            }, 200);
+            if(reward) {
+                handler.postDelayed(() -> {
+                    Database.currentMode.backs += 4;
+                    mBtnLostUndoBackable.callOnClick();
+                }, 200);
+                reward = false;
+            }
         }
 
         @Override
