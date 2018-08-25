@@ -209,7 +209,8 @@ public class Dialog extends AnimatedFragment {
 
         //home
         mBtnLostHomeBackable.setOnClickListener(v -> {
-            mBtnLostHomeNoInternet.callOnClick();
+            mActivity.hideDialog(0);
+            mActivity.showHome(0, mActivity.game);
         });
 
         //restart

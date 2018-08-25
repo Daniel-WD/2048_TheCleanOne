@@ -209,10 +209,10 @@
             android:id="@+id/lyPause"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <Button
-                android:id="@+id/btnPauseHome"
+                android:id="@+id/btnPauseRestart"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
@@ -221,7 +221,7 @@
                 android:fontFamily="sans-serif"
                 android:paddingBottom="16dp"
                 android:paddingTop="20dp"
-                android:text="@string/home"
+                android:text="@string/restart"
                 android:textAllCaps="false"
                 android:textColor="@color/black"
                 android:textSize="25sp"
@@ -237,10 +237,10 @@
                 android:background="#32000000"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnPauseHome" />
+                app:layout_constraintTop_toBottomOf="@+id/btnPauseRestart" />
 
             <Button
-                android:id="@+id/btnPauseRestart"
+                android:id="@+id/btnPauseHome"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
@@ -249,7 +249,7 @@
                 android:fontFamily="sans-serif"
                 android:paddingBottom="16dp"
                 android:paddingTop="16dp"
-                android:text="@string/restart"
+                android:text="@string/home"
                 android:textAllCaps="false"
                 android:textColor="@color/black"
                 android:textSize="25sp"
@@ -264,7 +264,7 @@
                 android:background="#32000000"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnPauseRestart" />
+                app:layout_constraintTop_toBottomOf="@+id/btnPauseHome" />
 
             <Button
                 android:id="@+id/btnPauseBack"
@@ -390,7 +390,7 @@
             android:id="@+id/lyLostVideo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/tvLostVideo"
@@ -426,10 +426,10 @@
 
 
                 <View
-                    android:layout_gravity="center_vertical"
                     android:id="@+id/vVideoDivider"
                     android:layout_width="0.5dp"
                     android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginBottom="16dp"
                     android:layout_marginEnd="10.5dp"
                     android:layout_marginStart="12dp"

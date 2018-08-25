@@ -300,17 +300,11 @@ public class Game extends AnimatedFragment {
         AnimUtils.animateTranslationY(mTvPoints, new DecelerateInterpolator(2), 0, moveDuration, delay);
 
         //record
-        if(Database.currentMode.record == 0) {
-            mTvRecord.setVisibility(View.GONE);
-        } else {
-            mTvRecord.setVisibility(View.VISIBLE);
 
-            mTvRecord.setAlpha(0f);
-            mTvRecord.setTranslationY(30);
-            AnimUtils.animateAlpha(mTvRecord, new DecelerateInterpolator(2), 1, moveDuration, delay);
-            AnimUtils.animateTranslationY(mTvRecord, new DecelerateInterpolator(2), 0, moveDuration, delay);
-        }
-
+        mTvRecord.setAlpha(0f);
+        mTvRecord.setTranslationY(30);
+        AnimUtils.animateAlpha(mTvRecord, new DecelerateInterpolator(2), 1, moveDuration, delay);
+        AnimUtils.animateTranslationY(mTvRecord, new DecelerateInterpolator(2), 0, moveDuration, delay);
         delay += 200;
 
         //point dividers
