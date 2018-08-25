@@ -150,7 +150,7 @@ public class GameField extends View {
             anim.setInterpolator(new FastOutSlowInInterpolator());
             anim.start();
 
-            ValueAnimator rotationAnim = ValueAnimator.ofFloat(mRandom.nextInt(80)-40, 0);
+            ValueAnimator rotationAnim = ValueAnimator.ofFloat(mRandom.nextInt(80) - 40, 0);
             rotationAnim.addUpdateListener(valueAnimator -> {
                 borderRotation = (float) valueAnimator.getAnimatedValue();
                 invalidate();
@@ -354,8 +354,8 @@ public class GameField extends View {
     private int mBorderColor;
     private int mDividerColor;
 
-    private final float mBorderWidth = 1f;
-    private final float mDividerWidth = 0.8f;
+    private final float mBorderWidth = 1f; //1f
+    private final float mDividerWidth = 0.8f; //0.8f
     private final float mTileBorderWidth = 2f;
     //    private final float mTileBorderWidth = 2f;
     private final float mMinSwipeDistance = 10;
@@ -366,7 +366,7 @@ public class GameField extends View {
     private final float mTileScale = 0.77f;
     private final float mTileRadiusRatio = 0.042f;
     private final float mTextSizeRatio = 0.55f;
-    private final float mFieldScale = 0.98f;
+    private final float mFieldScale = 1f; //0.98
 
     private int mWidth, mHeight;
 
@@ -386,6 +386,9 @@ public class GameField extends View {
 
     public GameField(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+
+//        setScaleX(2f - mFieldScale);
+//        setScaleY(2f - mFieldScale);
 
         mBorderColor = ContextCompat.getColor(context, R.color.game_border_color);
         mDividerColor = ContextCompat.getColor(context, R.color.game_divider_color);
@@ -876,9 +879,12 @@ public class GameField extends View {
     }
 
     Rect textRect = new Rect();
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+//        long first = System.nanoTime();
 
 //        canvas.save();
 //
@@ -897,30 +903,28 @@ public class GameField extends View {
 //            canvas.drawPath(mDividersPath, mDividerPaint);
 //        } else {
 
-            //left border
-            canvas.drawLine(0, borderMargin, 0, mHeight - borderMargin, mBorderPaint);
+        //left border
+        canvas.drawLine(0, borderMargin, 0, mHeight - borderMargin, mBorderPaint);
 
-            //right border
-            canvas.drawLine(mWidth, borderMargin, mWidth, mHeight - borderMargin, mBorderPaint);
+        //right border
+        canvas.drawLine(mWidth, borderMargin, mWidth, mHeight - borderMargin, mBorderPaint);
 
-            //top border
-            canvas.drawLine(borderMargin, 0, mWidth - borderMargin, 0, mBorderPaint);
+        //top border
+        canvas.drawLine(borderMargin, 0, mWidth - borderMargin, 0, mBorderPaint);
 
-            //bottom border
-            canvas.drawLine(borderMargin, mHeight, mWidth - borderMargin, mHeight, mBorderPaint);
+        //bottom border
+        canvas.drawLine(borderMargin, mHeight, mWidth - borderMargin, mHeight, mBorderPaint);
 
 
-
-            for(int i = 0; i < mFieldSize; i++) {
-                for(int j = 0; j < mFieldSize; j++) {
-                    if(i != 0)
-                        canvas.drawLine(mFullBlockSize*i, mFullBlockSize*j + halfNegative, mFullBlockSize*i, mFullBlockSize*(j + 1) - halfNegative, mDividerPaint);
-                    if(j != 0)
-                        canvas.drawLine(mFullBlockSize*i + halfNegative, mFullBlockSize*j, mFullBlockSize*(i + 1) - halfNegative, mFullBlockSize*j, mDividerPaint);
-                }
+        for(int i = 0; i < mFieldSize; i++) {
+            for(int j = 0; j < mFieldSize; j++) {
+                if(i != 0)
+                    canvas.drawLine(mFullBlockSize*i, mFullBlockSize*j + halfNegative, mFullBlockSize*i, mFullBlockSize*(j + 1) - halfNegative, mDividerPaint);
+                if(j != 0)
+                    canvas.drawLine(mFullBlockSize*i + halfNegative, mFullBlockSize*j, mFullBlockSize*(i + 1) - halfNegative, mFullBlockSize*j, mDividerPaint);
             }
+        }
 //        }
-
 
 
         float radius = (mFullBlockSize - halfNegative*2)*mTileRadiusRatio;
@@ -969,10 +973,10 @@ public class GameField extends View {
 //            Log.e("draw::checkTHREE", String.valueOf(System.nanoTime() - first));
 //            first = System.nanoTime();
 
-            float yOffset = (realTileSize() + textRect.height())/2 -1;
+            float yOffset = (realTileSize() + textRect.height())/2 - 1;
             canvas.translate(0, yOffset);
 
-            canvas.drawText(text, ((float)mFullBlockSize - 2*halfNegative)/2f - textWidth/2 -1, 0, mTextPaint);
+            canvas.drawText(text, ((float) mFullBlockSize - 2*halfNegative)/2f - textWidth/2 - 1, 0, mTextPaint);
 
             canvas.restore();
 
@@ -982,6 +986,10 @@ public class GameField extends View {
         }
 
 //        canvas.restore();
+
+
+//        Log.e("draw::check", String.valueOf(System.nanoTime() - first));
+//        first = System.nanoTime();
 
     }
 
