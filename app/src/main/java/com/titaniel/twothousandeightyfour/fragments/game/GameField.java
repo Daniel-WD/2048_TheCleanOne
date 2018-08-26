@@ -314,7 +314,7 @@ public class GameField extends View {
 
     private final static long GENERATE_DURATION = 150;
     private final static long MOVE_DURATION = 130;
-    private final static long JOIN_DURATION = 200;
+    private final static long JOIN_DURATION = 180;
 
     private final static long REMOVE_DURATION = 150;
     private final static long RETURN_DURATION = 150;

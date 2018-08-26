@@ -156,9 +156,6 @@ public class Game extends AnimatedFragment {
         //points reset
         updatePointsText();
         updateRecordText();
-
-        //hide back
-        mLyBack.setVisibility(View.INVISIBLE);
     }
 
     private void refreshBackState() {
