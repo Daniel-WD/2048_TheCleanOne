@@ -2,6 +2,7 @@ package com.titaniel.twothousandeightyfour;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -36,27 +37,35 @@ public class MainActivity extends AppCompatActivity {
 
     private Handler mHandler = new Handler();
 
+    private Handler mAdmobHandler;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //admob
-        Admob.init(this);
+        HandlerThread thread = new HandlerThread("admob");
+        thread.start();
+        mAdmobHandler = new Handler(thread.getLooper());
+        mAdmobHandler.post(() -> {
+            //admob
+            Admob.init(this, mHandler);
+        });
+
 
         //Database
         Database.init(this);
 
         //init Fragments
         home = (Home) getSupportFragmentManager().findFragmentById(R.id.fragmentHome);
-        achievements = (Achievements) getSupportFragmentManager().findFragmentById(R.id.fragmentAchievements);
+//        achievements = (Achievements) getSupportFragmentManager().findFragmentById(R.id.fragmentAchievements);
         game = (Game) getSupportFragmentManager().findFragmentById(R.id.fragmentGame);
         dialog = (Dialog) getSupportFragmentManager().findFragmentById(R.id.fragmentDialog);
 
         //views
         //mIvBackground = findViewById(R.id.ivBackground);
 
-        mHandler.postDelayed(() -> showHome(0, null), 900);
+        mHandler.postDelayed(() -> showHome(0, null), 500);
 //        mHandler.postDelayed(() -> showDialog(0, Dialog.MODE_LOST_VIDEO), 800);
 
 
@@ -101,7 +110,10 @@ public class MainActivity extends AppCompatActivity {
 
         Database.load();
 
-        Admob.rewardedVideoAd.resume(this);
+
+        mHandler.post(() -> {
+            if(Admob.rewardedVideoAd != null) Admob.rewardedVideoAd.resume(this);
+        });
     }
 
     @Override
@@ -114,14 +126,18 @@ public class MainActivity extends AppCompatActivity {
 
         Database.save();
 
-        Admob.rewardedVideoAd.pause(this);
+        mHandler.post(() -> {
+            if(Admob.rewardedVideoAd != null) Admob.rewardedVideoAd.pause(this);
+        });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        Admob.rewardedVideoAd.destroy(this);
+        mHandler.post(() -> {
+            if(Admob.rewardedVideoAd != null) Admob.rewardedVideoAd.destroy(this);
+        });
     }
 
     @Override

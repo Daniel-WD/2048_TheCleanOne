@@ -44,7 +44,7 @@ public class GameField extends View {
     interface MoveListener {
         void onMove(int direction);
 
-        void onJoin(int newNumber);
+        void onJoin(int points, int maxNumber);
 
         void onMoveCompleted();
 
@@ -310,11 +310,18 @@ public class GameField extends View {
 
     }
 
+    class TextConfig {
+
+        TextPaint paint;
+        float yOffset;
+
+    }
+
     private ArrayList<FieldImage> mImages = new ArrayList<>();
 
     private final static long GENERATE_DURATION = 150;
     private final static long MOVE_DURATION = 130;
-    private final static long JOIN_DURATION = 180;
+    private final static long JOIN_DURATION = 170;
 
     private final static long REMOVE_DURATION = 150;
     private final static long RETURN_DURATION = 150;
@@ -339,6 +346,8 @@ public class GameField extends View {
             0.28f,//8
             0.25f//9
     };
+
+    private final TextConfig[] mTextConfigs = new TextConfig[9];
 
     private ArrayList<Tile> mTiles = new ArrayList<>();
 
@@ -583,11 +592,11 @@ public class GameField extends View {
     public void doubleTile(Tile tile) {
         saveBackup();
         tile.increase();
-        if(mMoveListener != null) mMoveListener.onJoin(tile.number);
+        if(mMoveListener != null) mMoveListener.onJoin(tile.number, tile.number);
     }
 
     public boolean canUserMove() {
-        if(mTiles.size() != mFieldSize*mFieldSize) return true;
+        if(mTiles.size() < mFieldSize*mFieldSize) return true;
         boolean result = false;
         moveVertical(true, true);
         for(Tile tile : mTiles) {
@@ -744,8 +753,12 @@ public class GameField extends View {
 
         if(smtNeedToMove) {
             postDelayed(this::joinTiles, MOVE_DURATION - 10);
-            postDelayed(() -> generateTile(false), JOIN_DURATION + 20);
-            postDelayed(this::moveCompleted, JOIN_DURATION + 30);
+            postDelayed(() -> generateTile(false), MOVE_DURATION + 30);
+            postDelayed(() -> {
+                canMove = true;
+                if(mMoveListener != null) mMoveListener.onMoveCompleted();
+            }, MOVE_DURATION + 40);
+
         } else {
             mImages.remove(mImages.size() - 1);
             canMove = true;
@@ -775,24 +788,20 @@ public class GameField extends View {
     }
 
     private boolean joinTiles() {
+        int maxNumber = 0, points = 0;
         ArrayList<Tile> removableTiles = new ArrayList<>();
         for(Tile tile : mTiles) {
             if(tile.state == Tile.STATE_REMOVE_IN_FUTURE) {
                 removableTiles.add(tile);
             } else if(tile.state == Tile.STATE_INCREASE_IN_FUTURE) {
                 tile.increase();
-                if(mMoveListener != null) mMoveListener.onJoin(tile.number);
+                points += tile.number;
+                maxNumber = Math.max(maxNumber, tile.number);
             }
         }
+        if(mMoveListener != null) mMoveListener.onJoin(maxNumber, points);
         mTiles.removeAll(removableTiles);
         return removableTiles.size() != 0;
-    }
-
-    private void moveCompleted() {
-        Log.d("tilesize", "" + mTiles.size());
-        Log.d("imagesize", "" + mImages.size());
-        if(mMoveListener != null) mMoveListener.onMoveCompleted();
-        canMove = true;
     }
 
     private void generateTile(boolean first) {
@@ -955,28 +964,18 @@ public class GameField extends View {
                 canvas.rotate(tile.rotation, realTileSize()/2, realTileSize()/2);
             }
 
-//            long first = System.nanoTime();
-
             String text = String.valueOf(tile.number);
 
-            float textScale = mScalings[text.length() - 1];
-            mTextPaint.setTextSize(mTextSizePx*textScale);
+            TextConfig config = mTextConfigs[text.length() - 1];
 
-//            Log.e("draw::checkTWO", String.valueOf(System.nanoTime() - first));
-//            first = System.nanoTime();
+            config.paint.setColor(mColorMap.get(tile.number));
 
-            textRect.setEmpty();
-            mTextPaint.getTextBounds(text, 0, text.length(), textRect);
+            float textWidth = config.paint.measureText(text);
 
-            float textWidth = mTextPaint.measureText(text);
 
-//            Log.e("draw::checkTHREE", String.valueOf(System.nanoTime() - first));
-//            first = System.nanoTime();
-
-            float yOffset = (realTileSize() + textRect.height())/2 - 1;
-            canvas.translate(0, yOffset);
-
-            canvas.drawText(text, ((float) mFullBlockSize - 2*halfNegative)/2f - textWidth/2 - 1, 0, mTextPaint);
+            canvas.translate(0, config.yOffset);
+//
+            canvas.drawText(text, ((float) mFullBlockSize - 2*halfNegative)/2f - textWidth/2 - 1, 0, config.paint);
 
             canvas.restore();
 
@@ -1120,6 +1119,32 @@ public class GameField extends View {
                     mDividersPath.lineTo(mFullBlockSize*(i + 1) - halfNegative, mFullBlockSize*j);
                 }
             }
+        }
+
+        calcTextConfigs();
+
+    }
+
+    private void calcTextConfigs() {
+        String text = "1234";
+        Rect rect = new Rect();
+
+        for(int i = 0; i < mTextConfigs.length; i++) {
+            TextConfig config = new TextConfig();
+
+            TextPaint paint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            paint.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
+
+            float textScale = mScalings[i];
+            paint.setTextSize(mTextSizePx*textScale);
+
+            rect.setEmpty();
+            paint.getTextBounds(text, 0, text.length(), rect);
+
+            config.paint = paint;
+            config.yOffset = (realTileSize() + rect.height())/2 - 1;
+
+            mTextConfigs[i] = config;
         }
 
     }
