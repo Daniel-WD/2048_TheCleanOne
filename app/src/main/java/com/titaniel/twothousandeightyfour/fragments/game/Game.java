@@ -128,12 +128,12 @@ public class Game extends AnimatedFragment {
             }
 
             @Override
-            public void onJoin(int newPoints) {
+            public void onJoin(int newPoints, int maxNumber) {
                 // --> no animation --> see gamefield
                 Database.currentMode.points += newPoints;
                 updatePointsText();
 
-                if(newPoints == 2048) {
+                if(maxNumber == 2048) {
                     mActivity.showDialog(300, Dialog.MODE_WON);
                     disableAll();
                 }
@@ -149,6 +149,7 @@ public class Game extends AnimatedFragment {
             @Override
             public void onBackCompleted() {
                 Database.currentMode.backs--;
+                updateBackText();
                 refreshBackState();
             }
         });
@@ -163,7 +164,6 @@ public class Game extends AnimatedFragment {
         if(Database.currentMode.backs == 0 || !gameField.canPerformBack()) {
             hideBack();
         } else {
-            mTvBackCount.setText(String.valueOf(Database.currentMode.backs));
             showBack();
         }
 
@@ -223,6 +223,8 @@ public class Game extends AnimatedFragment {
 
     public void enableAll() {
 
+        updateBackText();
+
         gameField.setEnabled(true);
         mBtnPause.setEnabled(true);
         mLyBack.setEnabled(true);
@@ -250,6 +252,7 @@ public class Game extends AnimatedFragment {
         enableAll();
         Database.currentMode.points = 0;
         Database.currentMode.backs = Database.START_BACK_VALUE;
+        updateBackText();
         reset();
         refreshBackState();
         handler.postDelayed(() -> gameField.showStartTiles(), 500);
@@ -268,6 +271,10 @@ public class Game extends AnimatedFragment {
 
     public void updateRecordText() {
         mTvRecord.setText(getString(R.string.temp_best, Database.currentMode.record));
+    }
+
+    public void updateBackText() {
+        mTvBackCount.setText(String.valueOf(Database.currentMode.backs));
     }
 
     @Override

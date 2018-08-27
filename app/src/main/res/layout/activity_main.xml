@@ -14,13 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <fragment
-        tools:visibility="invisible"
-        android:id="@+id/fragmentAchievements"
-        tools:layout="@layout/fragment_achievements"
-        android:name="com.titaniel.twothousandeightyfour.fragments.achievements.Achievements"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <!--<fragment-->
+        <!--tools:visibility="invisible"-->
+        <!--android:id="@+id/fragmentAchievements"-->
+        <!--tools:layout="@layout/fragment_achievements"-->
+        <!--android:name="com.titaniel.twothousandeightyfour.fragments.achievements.Achievements"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"/>-->
 
     <fragment
         tools:visibility="invisible"
