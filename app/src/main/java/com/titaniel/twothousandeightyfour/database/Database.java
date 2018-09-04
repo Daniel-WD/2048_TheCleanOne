@@ -107,77 +107,6 @@ public class Database {
         achievements[5].state = Achievement.STATE_GETABLE;
     }
 
-    private static String twoDimIntArrayToString(int[][] array) {
-        if(array == null) return null;
-        StringBuilder res = new StringBuilder();
-
-        for(int i = 0; i < array.length; i++) {
-            res.append(":");
-            for(int j = 0; j < array[i].length; j++) {
-                res.append("$");
-                res.append(array[i][j]);
-                res.append("%");
-            }
-            res.append(":");
-        }
-
-        return res.toString();
-    }
-
-    private static int[][] stringToTwoDimIntArray(final String string) {
-        if(string == null) return null;
-
-        int firstDimCount = (string.length() - string.replace(":", "").length())/2;
-        int secDimCount = (string.length() - string.replace("$", "").length())/firstDimCount;
-
-        StringBuilder builder = new StringBuilder(string);
-
-        int[][] res = new int[firstDimCount][secDimCount];
-
-        for(int i = 0; i < res.length; i++) {
-            for(int j = 0; j < res[i].length; j++) {
-                int index = builder.indexOf("$");
-                builder.replace(0, index+1, "");
-                index = builder.indexOf("%");
-                int number = Integer.parseInt(builder.substring(0, index));
-                res[i][j] = number;
-            }
-        }
-
-        return res;
-    }
-
-    private static String imageToString(ArrayList<GameField.FieldImage> img) {
-        if(img == null || img.size() == 0) return "";
-        StringBuilder result = new StringBuilder();
-
-        for(GameField.FieldImage image : img) {
-            result.append("+");
-            result.append(twoDimIntArrayToString(image.image));
-            result.append("-");
-        }
-
-        return result.toString();
-    }
-
-    private static ArrayList<GameField.FieldImage> stringToImage(String string) {
-        if(string == null) return null;
-        ArrayList<GameField.FieldImage> result = new ArrayList<>();
-
-        StringBuilder builder = new StringBuilder(string);
-
-        while(builder.toString().contains("+")) {
-            int dexPlus = builder.indexOf("+");
-            int dexMinus = builder.indexOf("-");
-            String sub = builder.substring(dexPlus+1, dexMinus);
-            result.add(new GameField.FieldImage(stringToTwoDimIntArray(sub)));
-
-            builder.replace(0, dexMinus+1, "");
-        }
-
-        return result;
-    }
-
     public static void load() {
 
         long time = System.nanoTime();
@@ -187,7 +116,7 @@ public class Database {
             mode.points = sPrefs.getInt("points-" + mode.id, 0);
             mode.backs = sPrefs.getInt("backs-" + mode.id, 0);
 
-            mode.saved = stringToImage(sPrefs.getString("image-" + mode.id, null));
+            mode.saved = DataUtils.stringToImage(sPrefs.getString("image-" + mode.id, null));
         }
 
         Log.e("load_duration", "time: " + (System.nanoTime()-time));
@@ -203,7 +132,7 @@ public class Database {
 
             String image = null;
             if(mode.saved != null && mode.saved.size() > 0) {
-                image = imageToString(mode.saved);
+                image = DataUtils.imageToString(mode.saved);
             }
 
             editor.putString("image-" + mode.id, image);

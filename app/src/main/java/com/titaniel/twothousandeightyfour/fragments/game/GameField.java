@@ -17,13 +17,15 @@ import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.SparseIntArray;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 
 import com.titaniel.twothousandeightyfour.R;
+import com.titaniel.twothousandeightyfour.database.DesignProvider;
+import com.titaniel.twothousandeightyfour.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,20 +59,20 @@ public class GameField extends View {
 
         final static int STATE_UNPAIRED = 0, STATE_REMOVE_IN_FUTURE = 1, STATE_INCREASE_IN_FUTURE = 2;
 
-        Tile(int row, int col, int number) {
+        Tile(int row, int col, int id) {
             int[] pos = positionForRowCol(row, col);
             this.col = col;
             this.row = row;
             this.x = pos[0];
             this.y = pos[1];
-            this.number = number;
+            this.id = id;
         }
 
         float x, y; //top left corner of block!!!
         float scale = 1;
         float rotation = 0; //affects all(inclusive border)
         float borderRotation = 0; //affects only border
-        int number, row, col;
+        int id, row, col;
 
         int nextRow = -1, nextCol = -1;
         int state = STATE_UNPAIRED;
@@ -216,7 +218,7 @@ public class GameField extends View {
         }
 
         void increase() {
-            number *= 2;
+            id++;
 
             ValueAnimator rotationAnim = ValueAnimator.ofFloat(0, 90);
             rotationAnim.addUpdateListener(valueAnimator -> {
@@ -226,15 +228,15 @@ public class GameField extends View {
             rotationAnim.setDuration(JOIN_DURATION);
             rotationAnim.setInterpolator(new FastOutSlowInInterpolator());
             rotationAnim.start();
-/*
-            ValueAnimator scaleAnim = ValueAnimator.ofFloat(1, 0.8f, 1);
-            scaleAnim.addUpdateListener(valueAnimator -> {
-                scale = (float) valueAnimator.getAnimatedValue();
-                invalidate();
-            });
-            scaleAnim.setDuration(JOIN_DURATION);
-            scaleAnim.setInterpolator(new FastOutSlowInInterpolator());
-            scaleAnim.start();*/
+
+//            ValueAnimator scaleAnim = ValueAnimator.ofFloat(1, 1.2f, 1);
+//            scaleAnim.addUpdateListener(valueAnimator -> {
+//                scale = (float) valueAnimator.getAnimatedValue();
+//                invalidate();
+//            });
+//            scaleAnim.setDuration(JOIN_DURATION);
+//            scaleAnim.setInterpolator(new FastOutSlowInInterpolator());
+//            scaleAnim.start();
 
             state = STATE_UNPAIRED;
         }
@@ -320,7 +322,7 @@ public class GameField extends View {
     private ArrayList<FieldImage> mImages = new ArrayList<>();
 
     private final static long GENERATE_DURATION = 150;
-    private final static long MOVE_DURATION = 130;
+    private final static long MOVE_DURATION = 120;
     private final static long JOIN_DURATION = 170;
 
     private final static long REMOVE_DURATION = 150;
@@ -332,8 +334,6 @@ public class GameField extends View {
     public final static int DIRECTION_DOWN = 1;
     public final static int DIRECTION_LEFT = 2;
     public final static int DIRECTION_RIGHT = 3;
-
-    private final SparseIntArray mColorMap = new SparseIntArray();
 
     private final float[] mScalings = {
             1f,//1
@@ -347,18 +347,12 @@ public class GameField extends View {
             0.25f//9
     };
 
-    private final TextConfig[] mTextConfigs = new TextConfig[9];
-
     private ArrayList<Tile> mTiles = new ArrayList<>();
-
-    private SpannableStringBuilder mDynamicText = new SpannableStringBuilder("");
-    private DynamicLayout mDynamicLayout;
 
     private final Paint mWhitePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint mBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint mDividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint mTilePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private final TextPaint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
 
     private int mBorderColor;
     private int mDividerColor;
@@ -368,13 +362,12 @@ public class GameField extends View {
     private final float mTileBorderWidth = 2f;
     //    private final float mTileBorderWidth = 2f;
     private final float mMinSwipeDistance = 10;
-    private float mBorderWidthPx, mDividerWidthPx, mTileBorderWidthPx, mTextSizePx, mMinSwipeDistancePx;
+    private float mBorderWidthPx, mDividerWidthPx, mTileBorderWidthPx, mMinSwipeDistancePx;
 
     private float mDividerScale = 0.78f;
     private float mBorderScale = 1f;
     private final float mTileScale = 0.77f;
     private final float mTileRadiusRatio = 0.042f;
-    private final float mTextSizeRatio = 0.55f;
     private final float mFieldScale = 1f; //0.98
 
     private int mWidth, mHeight;
@@ -392,6 +385,8 @@ public class GameField extends View {
     private Tile mDownTile = null;
 
     private Path mBaseTilePath, mBorderPath, mDividersPath;
+
+    private final int TILE_DESIGN_NUMBER = 0; // TODO: 04.09.2018 ...
 
     public GameField(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -423,35 +418,6 @@ public class GameField extends View {
         mTilePaint.setStrokeWidth(mTileBorderWidthPx);
         mTilePaint.setColor(Color.BLACK);
 
-        mTextPaint.setColor(Color.BLACK);
-        mTextPaint.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
-
-        //colors
-        float[] firstColor = {282, 0.64f, 0.93f};
-
-
-        for(int i = 1; i <= 6; i++) {
-//            mColorMap.append((int) Math.pow(2, i), Color.BLACK/*Color.HSVToColor(firstColor)*/);
-            mColorMap.append((int) Math.pow(2, i), Color.HSVToColor(firstColor));
-            //firstColor[0] -= 30;
-            firstColor[2] -= 0.1f;
-        }
-
-        float[] secondColor = {214, 0.70f, 0.84f};
-
-        for(int i = 7; i <= 10; i++) {
-            mColorMap.append((int) Math.pow(2, i), Color.HSVToColor(secondColor));
-            //firstColor[0] -= 30;
-            secondColor[2] -= 0.1f;
-        }
-
-        float[] thirdColor = {170, 0.99f, 0.79f};
-
-        for(int i = 11; i <= 20; i++) {
-            mColorMap.append((int) Math.pow(2, i), Color.HSVToColor(thirdColor));
-            //firstColor[0] -= 30;
-            thirdColor[2] -= 0.1f;
-        }
     }
 
     public void animateIn() {
@@ -537,7 +503,7 @@ public class GameField extends View {
         ArrayList<Tile> mRemovedTiles = new ArrayList<>();
         int[][] lastImage = mImages.get(mImages.size() - 1).image;
         for(Tile tile : mTiles) {
-            if(lastImage[tile.row][tile.col] != tile.number) {
+            if(lastImage[tile.row][tile.col] != tile.id) {
                 tile.animateRemove();
                 mRemovedTiles.add(tile);
             }
@@ -548,7 +514,7 @@ public class GameField extends View {
             for(int i = 0; i < lastImage.length; i++) {
                 nextTile:
                 for(int j = 0; j < lastImage.length; j++) {
-                    if(lastImage[i][j] == 0) continue;
+                    if(lastImage[i][j] == -1) continue;
                     for(Tile tile : mTiles) {
                         if(tile.row == i && tile.col == j) continue nextTile;
                     }
@@ -592,7 +558,7 @@ public class GameField extends View {
     public void doubleTile(Tile tile) {
         saveBackup();
         tile.increase();
-        if(mMoveListener != null) mMoveListener.onJoin(tile.number, tile.number);
+        if(mMoveListener != null) mMoveListener.onJoin(Utils.idToNum(tile.id), Utils.idToNum(tile.id));
     }
 
     public boolean canUserMove() {
@@ -630,7 +596,7 @@ public class GameField extends View {
         int[][] last = images.get(images.size() - 1).image;
         for(int i = 0; i < last.length; i++) {
             for(int j = 0; j < last.length; j++) {
-                if(last[i][j] == 0) continue;
+                if(last[i][j] == -1) continue;
                 Tile newTile = new Tile(i, j, last[i][j]);
                 mTiles.add(newTile);
                 newTile.animateRegeneration(mRandom.nextInt(300));
@@ -671,7 +637,7 @@ public class GameField extends View {
                 if(nextTile == null) {
                     tile.nextRow = up ? 0 : mFieldSize - 1;
                 } else {
-                    if(nextTile.state != Tile.STATE_UNPAIRED || tile.number != nextTile.number) {
+                    if(nextTile.state != Tile.STATE_UNPAIRED || tile.id != nextTile.id) {
 
                         if(up) {
                             tile.nextRow = nextTile.nextRow == -1 ? nextTile.row + 1 : nextTile.nextRow + 1;
@@ -721,7 +687,7 @@ public class GameField extends View {
                 if(nextTile == null) {
                     tile.nextCol = left ? 0 : mFieldSize - 1;
                 } else {
-                    if(nextTile.state != Tile.STATE_UNPAIRED || tile.number != nextTile.number) {
+                    if(nextTile.state != Tile.STATE_UNPAIRED || tile.id != nextTile.id) {
 
                         if(left) {
                             tile.nextCol = nextTile.nextCol == -1 ? nextTile.col + 1 : nextTile.nextCol + 1;
@@ -752,12 +718,12 @@ public class GameField extends View {
         boolean smtNeedToMove = massMove();
 
         if(smtNeedToMove) {
-            postDelayed(this::joinTiles, MOVE_DURATION - 10);
-            postDelayed(() -> generateTile(false), MOVE_DURATION + 30);
+            postDelayed(this::joinTiles, MOVE_DURATION - 0);
+            postDelayed(() -> generateTile(false), MOVE_DURATION + 20);
             postDelayed(() -> {
                 canMove = true;
                 if(mMoveListener != null) mMoveListener.onMoveCompleted();
-            }, MOVE_DURATION + 40);
+            }, MOVE_DURATION + 30);
 
         } else {
             mImages.remove(mImages.size() - 1);
@@ -795,11 +761,14 @@ public class GameField extends View {
                 removableTiles.add(tile);
             } else if(tile.state == Tile.STATE_INCREASE_IN_FUTURE) {
                 tile.increase();
-                points += tile.number;
-                maxNumber = Math.max(maxNumber, tile.number);
+                points += Utils.idToNum(tile.id);
+                maxNumber = Math.max(maxNumber, Utils.idToNum(tile.id));
             }
         }
-        if(mMoveListener != null) mMoveListener.onJoin(maxNumber, points);
+        int constPoints = points, constMaxNumber = maxNumber;
+        postDelayed(() -> {
+            if(mMoveListener != null) mMoveListener.onJoin(constPoints, constMaxNumber);
+        }, JOIN_DURATION);
         mTiles.removeAll(removableTiles);
         return removableTiles.size() != 0;
     }
@@ -809,14 +778,14 @@ public class GameField extends View {
 
         int rCol;
         int rRow;
-        int pow = mRandom.nextInt(2) + 1;
+        int id = mRandom.nextInt(2);
 
         do {
             rCol = mRandom.nextInt(mFieldSize);
             rRow = mRandom.nextInt(mFieldSize);
         } while(!isPositionEmpty(rRow, rCol));
 
-        Tile tile = new Tile(rRow, rCol, (int) Math.pow(2, pow));
+        Tile tile = new Tile(rRow, rCol, id);
 
         mTiles.add(tile);
         if(first) {
@@ -837,6 +806,7 @@ public class GameField extends View {
     public void showStartTiles() {
         int tileCount = 2;
         canMove = false;
+
         long delay = 150;
         for(int i = 0; i < tileCount; i++) {
             postDelayed(() -> generateTile(true), i*delay);
@@ -853,11 +823,11 @@ public class GameField extends View {
         int[][] image = new int[mFieldSize][mFieldSize];
         for(int i = 0; i < image.length; i++) {
             for(int j = 0; j < image[i].length; j++) {
-                image[i][j] = 0;
+                image[i][j] = -1;
             }
         }
         for(Tile tile : mTiles) {
-            image[tile.row][tile.col] = tile.number;
+            image[tile.row][tile.col] = tile.id;
         }
         return image;
     }
@@ -887,11 +857,11 @@ public class GameField extends View {
         invalidate();
     }
 
-    Rect textRect = new Rect();
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+
 
 //        long first = System.nanoTime();
 
@@ -946,8 +916,7 @@ public class GameField extends View {
                 canvas.scale(tile.scale, tile.scale, realTileSize()/2, realTileSize()/2);
             }
 
-            mTilePaint.setColor(mColorMap.get(tile.number));
-            mTextPaint.setColor(mColorMap.get(tile.number));
+            mTilePaint.setColor(DesignProvider.colors[tile.id]);
 
             canvas.save();
             if(tile.borderRotation + tile.rotation != 0 && tile.borderRotation + tile.rotation != 360) {
@@ -964,23 +933,16 @@ public class GameField extends View {
                 canvas.rotate(tile.rotation, realTileSize()/2, realTileSize()/2);
             }
 
-            String text = String.valueOf(tile.number);
-
-            TextConfig config = mTextConfigs[text.length() - 1];
-
-            config.paint.setColor(mColorMap.get(tile.number));
-
-            float textWidth = config.paint.measureText(text);
 
 
-            canvas.translate(0, config.yOffset);
-//
-            canvas.drawText(text, ((float) mFullBlockSize - 2*halfNegative)/2f - textWidth/2 - 1, 0, config.paint);
+            long first = System.nanoTime();
+
+            DesignProvider.tileDesigns.get(TILE_DESIGN_NUMBER).tileDrawables[tile.id].draw(canvas);
+
+            Log.e("draw::checkFOUR", String.valueOf(System.nanoTime() - first));
+            Log.e("draw::check", "------------------------------------------------------------------------------------");
 
             canvas.restore();
-
-//            Log.e("draw::checkFOUR", String.valueOf(System.nanoTime() - first));
-//            Log.e("draw::check", "------------------------------------------------------------------------------------");
 
         }
 
@@ -1069,12 +1031,6 @@ public class GameField extends View {
 
         mFullBlockSize = w/mFieldSize;
 
-        mDynamicLayout = new DynamicLayout(mDynamicText, mTextPaint, realTileSize(),
-                Layout.Alignment.ALIGN_CENTER, 1, 0, false);
-
-        //textsize px
-        mTextSizePx = realTileSize()*mTextSizeRatio;
-
         //base tile path
         mBaseTilePath = new Path();
         float halfNegative = mFullBlockSize*(1 - mTileScale)/2;
@@ -1121,31 +1077,8 @@ public class GameField extends View {
             }
         }
 
-        calcTextConfigs();
-
-    }
-
-    private void calcTextConfigs() {
-        String text = "1234";
-        Rect rect = new Rect();
-
-        for(int i = 0; i < mTextConfigs.length; i++) {
-            TextConfig config = new TextConfig();
-
-            TextPaint paint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-            paint.setTypeface(Typeface.create("sans-serif", Typeface.BOLD));
-
-            float textScale = mScalings[i];
-            paint.setTextSize(mTextSizePx*textScale);
-
-            rect.setEmpty();
-            paint.getTextBounds(text, 0, text.length(), rect);
-
-            config.paint = paint;
-            config.yOffset = (realTileSize() + rect.height())/2 - 1;
-
-            mTextConfigs[i] = config;
-        }
+        //tile drawable sizes
+        DesignProvider.setSize(realTileSize());
 
     }
 

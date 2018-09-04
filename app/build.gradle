@@ -14,8 +14,8 @@ android {
         applicationId "com.titaniel.twothousandeightyfour"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 6
-        versionName "1.2.3"
+        versionCode 7
+        versionName "1.2.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
