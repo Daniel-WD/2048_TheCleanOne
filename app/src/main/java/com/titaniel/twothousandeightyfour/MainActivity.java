@@ -10,6 +10,7 @@ import android.view.View;
 import com.google.android.gms.ads.MobileAds;
 import com.titaniel.twothousandeightyfour.admob.Admob;
 import com.titaniel.twothousandeightyfour.database.Database;
+import com.titaniel.twothousandeightyfour.database.DesignProvider;
 import com.titaniel.twothousandeightyfour.fragments.Dialog;
 import com.titaniel.twothousandeightyfour.fragments.game.Game;
 import com.titaniel.twothousandeightyfour.fragments.achievements.Achievements;
@@ -55,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
 
         //Database
         Database.init(this);
+
+        //Design Provider
+        DesignProvider.init(this);
 
         //init Fragments
         home = (Home) getSupportFragmentManager().findFragmentById(R.id.fragmentHome);
