@@ -69,7 +69,12 @@ public class DesignProvider {
                 context.getDrawable(R.drawable.num_14),
                 context.getDrawable(R.drawable.num_15),
                 context.getDrawable(R.drawable.num_16),
-                context.getDrawable(R.drawable.num_17)
+                context.getDrawable(R.drawable.num_17),
+                context.getDrawable(R.drawable.num_18),
+                context.getDrawable(R.drawable.num_19),
+                context.getDrawable(R.drawable.num_20),
+                context.getDrawable(R.drawable.num_21),
+                context.getDrawable(R.drawable.num_22)
         };
 
         tileDesigns.add(new TileDesign(numbers));
